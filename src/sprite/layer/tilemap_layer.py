@@ -9,10 +9,8 @@ class TilemapLayer(Layer):
         super().__init__(sprite)
         self.tileset_index: int = 0
 
-    def read_from_chunk(
-        self, chunk_size: int, chunk_data: bytes, layers_have_uuid: bool
-    ) -> Self:
-        super().read_from_chunk(chunk_size, chunk_data, layers_have_uuid)
+    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
+        super().read_from_chunk(chunk_size, chunk_data)
 
         layer_name_length = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
         end_byte = 18 + layer_name_length

@@ -8,7 +8,7 @@ class GrayscalePixel:
         self.alpha = alpha
 
     def __repr__(self):
-        return f"IndexedPixel({self.value}, {self.alpha})"
+        return f"GrayscalePixel({self.value}, {self.alpha})"
 
 
 def parse_grayscale_pixel_stream(stream: bytes) -> list[GrayscalePixel]:

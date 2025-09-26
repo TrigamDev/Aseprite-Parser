@@ -16,6 +16,9 @@ class Cel:
         self.opacity: int = 0
         self.z_index: int = 0
 
+    def __repr__(self):
+        return f"Cel({self.layer_index})"
+
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         self.layer_index = struct.unpack("<i", chunk_data[0:2] + b"\x00\x00")[0]
 

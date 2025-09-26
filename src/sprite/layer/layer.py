@@ -12,6 +12,7 @@ class Layer:
         self.uuid: int | None = None
         self.layer_name: str = ""
         self.layer_type: LayerType = LayerType.Unknown
+        self.layer_index: int = len(self.sprite.layers)
         self.child_level: int = 0
 
         self.opacity: int = 0
@@ -30,9 +31,10 @@ class Layer:
             "is_reference_layer": False,
         }
 
-    def read_from_chunk(
-        self, chunk_size: int, chunk_data: bytes, layers_have_uuid: bool
-    ) -> Self:
+    def __repr__(self):
+        return f"Layer({self.layer_name}, {self.layer_index})"
+
+    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         layer_name_length = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
         end_byte = 18 + layer_name_length
         self.layer_name = chunk_data[18:end_byte].decode("utf-8")
@@ -58,7 +60,7 @@ class Layer:
         self.flags["is_layer_group_collapsed"] = bool((flags >> 5) & 1)
         self.flags["is_reference_layer"] = bool((flags >> 6) & 1)
 
-        if layers_have_uuid:
-            self.uuid = struct.unpack("<i", chunk_data[chunk_size - 16 : chunk_size])[0]
+        if self.sprite.flags["layers_have_uuid"]:
+            self.uuid = struct.unpack("<iiii", chunk_data[chunk_size - 16 : chunk_size])[0]
 
         return self

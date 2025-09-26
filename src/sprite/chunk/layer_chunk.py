@@ -20,15 +20,11 @@ class LayerChunk(Chunk):
         match layer_type:
             case LayerType.Normal:
                 return Layer(self.sprite).read_from_chunk(
-                    self.chunk_size,
-                    self.chunk_data,
-                    self.sprite.flags["layers_have_uuid"],
+                    self.chunk_size, self.chunk_data
                 )
             case LayerType.Tilemap:
                 return TilemapLayer(self.sprite).read_from_chunk(
-                    self.chunk_size,
-                    self.chunk_data,
-                    self.sprite.flags["layers_have_uuid"],
+                    self.chunk_size, self.chunk_data
                 )
             case LayerType.Unknown | _:
                 return None

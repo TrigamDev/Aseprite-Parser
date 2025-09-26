@@ -10,12 +10,17 @@ from src.sprite.layer.layer import Layer
 
 class Frame:
     def __init__(self, sprite):
-        self.frame_duration: int = 0
         self.sprite = sprite
+        self.frame_index: int = len(sprite.frames)
+        self.frame_duration: int = 0
+
+        self.cels: list[Cel] = []
+
+    def __repr__(self):
+        return f"Frame({self.frame_index}, Cels: {self.cels})"
 
     def read(self, file_reader: BufferedReader) -> None:
         frame_header = file_reader.read(16)
-        # bytes_in_frame = struct.unpack( "<i", frame_header[0:4] )[ 0 ]
 
         frame_duration = struct.unpack("<i", frame_header[4:6] + b"\x00\x00")[0]
         if frame_duration > 0:
@@ -50,3 +55,5 @@ class Frame:
             case ChunkType.Cel:
                 chunk = CelChunk(self.sprite, chunk_size, chunk_data)
                 cel: Cel | None = chunk.read()
+                if cel:
+                    self.cels.append(cel)
