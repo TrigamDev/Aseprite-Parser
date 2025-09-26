@@ -2,14 +2,14 @@ from io import BufferedReader
 import struct
 
 from src.sprite.chunk.cel_chunk import CelChunk
+from src.sprite.chunk.chunk_type import ChunkType
 from src.sprite.chunk.layer_chunk import LayerChunk
-from src.enums import ChunkType
 
 
 class Frame:
-    def __init__(self, aseprite_file):
+    def __init__(self, sprite):
         self.frame_duration: int = 0
-        self.aseprite_file = aseprite_file
+        self.sprite = sprite
 
     def read(self, file_reader: BufferedReader):
         frame_header = file_reader.read(16)
@@ -19,7 +19,7 @@ class Frame:
         if frame_duration > 0:
             self.frame_duration = frame_duration
         else:
-            self.frame_duration = self.aseprite_file.frame_speed
+            self.frame_duration = self.sprite.frame_speed
 
         chunks_in_frame = struct.unpack("<i", frame_header[12:16])[0]
         print(f"Chunks in frame: {chunks_in_frame}")
@@ -46,4 +46,5 @@ class Frame:
                 chunk.read()
             case ChunkType.Cel:
                 chunk = CelChunk(self, chunk_size, chunk_data)
-                chunk.read()
+                cel = chunk.read()
+                print(f"Cel: {cel}")

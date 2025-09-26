@@ -1,23 +1,51 @@
+import struct
+import zlib
+from typing import Self
+
+import numpy
+
 from src.sprite.cel.cel import Cel
-from src.sprite.pixel.grayscale_pixel import GrayscalePixel
-from src.sprite.pixel.indexed_pixel import IndexedPixel
-from src.sprite.pixel.rgba_pixel import RGBAPixel
+from src.sprite.cel.cel_type import CelType
+from src.sprite.color.grayscale_pixel import (
+    GrayscalePixel,
+    parse_grayscale_pixel_stream,
+)
+from src.sprite.color.indexed_pixel import IndexedPixel, parse_indexed_pixel_stream
+from src.sprite.color.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
+from src.sprite.sprite import ColorDepth
 
 
 class ImageCel(Cel):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, color_depth: ColorDepth):
+        super().__init__(color_depth)
 
         self.width: int = 0
         self.height: int = 0
 
         self.pixels: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]] = []
 
-    def set_width(self, width: int):
-        self.width = width
+    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
+        super().read_from_chunk(chunk_size, chunk_data)
 
-    def set_height(self, height: int):
-        self.height = height
+        self.width = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
+        self.height = struct.unpack("<i", chunk_data[18:20] + b"\x00\x00")[0]
 
-    def set_pixels(self, pixels: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]]):
-        self.pixels = pixels
+        pixels_stream: bytes = chunk_data[20:chunk_size]
+        if self.cel_type == CelType.CompressedImage:
+            pixels_stream = zlib.decompress(pixels_stream)
+
+        pixels_list: list[IndexedPixel | GrayscalePixel | RGBAPixel] = []
+        match self.color_depth:
+            case ColorDepth.Indexed:
+                pixels_list = parse_indexed_pixel_stream(pixels_stream)
+            case ColorDepth.Grayscale:
+                pixels_list = parse_grayscale_pixel_stream(pixels_stream)
+            case ColorDepth.RGBA:
+                pixels_list = parse_rgba_pixel_stream(pixels_stream)
+
+        pixels_array: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]] = (
+            numpy.reshape(pixels_list, (self.width, self.height)).tolist()
+        )
+        self.pixels = pixels_array
+
+        return self
