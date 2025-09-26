@@ -1,12 +1,12 @@
 import struct
 
-from src.chunk.aseprite_chunk import AsepriteChunk
+from src.sprite.chunk.chunk import Chunk
 from src.enums import LayerType, BlendMode
 
 
-class LayerChunk(AsepriteChunk):
+class LayerChunk(Chunk):
     def __init__(self, frame, chunk_size: int, chunk_data: bytes):
-        AsepriteChunk.__init__(self, frame, chunk_size, chunk_data)
+        super().__init__(frame, chunk_size, chunk_data)
 
         self.uuid: int | None = None
         self.layer_name: str = ""

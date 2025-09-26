@@ -1,11 +1,11 @@
 from pathlib import Path
 import struct
 
-from src.aseprite_frame import AsepriteFrame
+from src.sprite.frame import Frame
 from src.enums import ColorDepth
 
 
-class AsepriteFile:
+class Sprite:
     def __init__(self):
         self.file_size: int = 0
         self.width: int = 0
@@ -31,7 +31,7 @@ class AsepriteFile:
         self.grid_height: int = 0
 
         self.color_depth: ColorDepth = ColorDepth.Unknown
-        self.frames: list[AsepriteFrame] = []
+        self.frames: list[Frame] = []
 
     def read_from_path(self, path: Path):
         with open(path, "rb") as aseprite_file:
@@ -88,7 +88,7 @@ class AsepriteFile:
                     0
                 ]
                 for frame in range(0, number_of_frames):
-                    self.frames.append(AsepriteFrame(self).read(aseprite_file))
+                    self.frames.append(Frame(self).read(aseprite_file))
             except Exception as exception:
                 print(exception)
         return self

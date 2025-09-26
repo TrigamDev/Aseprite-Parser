@@ -1,12 +1,12 @@
 from io import BufferedReader
 import struct
 
-from src.chunk.cel_chunk import CelChunk
-from src.chunk.layer_chunk import LayerChunk
+from src.sprite.chunk.cel_chunk import CelChunk
+from src.sprite.chunk.layer_chunk import LayerChunk
 from src.enums import ChunkType
 
 
-class AsepriteFrame:
+class Frame:
     def __init__(self, aseprite_file):
         self.frame_duration: int = 0
         self.aseprite_file = aseprite_file

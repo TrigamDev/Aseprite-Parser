@@ -2,7 +2,7 @@ import abc
 from abc import ABC
 
 
-class AsepriteChunk(ABC):
+class Chunk(ABC):
     def __init__(self, frame, chunk_size: int, chunk_data: bytes):
         self.frame = frame
         self.chunk_size: int = chunk_size

@@ -1,4 +1,4 @@
-class AsepriteCel:
+class Cel:
     def __init__(self):
         self.layer_index: int = 0
 

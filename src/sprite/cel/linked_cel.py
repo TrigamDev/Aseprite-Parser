@@ -1,7 +1,7 @@
-from src.cel.aseprite_cel import AsepriteCel
+from src.sprite.cel.cel import Cel
 
 
-class LinkedCel(AsepriteCel):
+class LinkedCel(Cel):
     def __init__(self):
         super().__init__()
 

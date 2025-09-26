@@ -22,7 +22,7 @@ class ChunkType(IntEnum):
 class ColorDepth(IntEnum):
     Unknown = -1
     Indexed = 8
-    Grayscale = 18
+    Grayscale = 16
     RGBA = 32
 
 
