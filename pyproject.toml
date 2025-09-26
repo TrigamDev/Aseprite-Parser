@@ -1,0 +1,12 @@
+[project]
+name = "asprite_parser"
+description = "Parses .ase and .aseprite files"
+
+version = "0.0.1"
+license = "MIT"
+
+authors = [
+    { name = "Trigam", email = "trigamdev@gmail.com" }
+]
+
+requires-python = ">=3.12"
