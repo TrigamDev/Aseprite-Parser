@@ -24,6 +24,9 @@ class ImageCel(Cel):
 
         self.pixels: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]] = []
 
+    def __repr__(self):
+        return f"ImageCel({self.width}x{self.height})"
+
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         super().read_from_chunk(chunk_size, chunk_data)
 

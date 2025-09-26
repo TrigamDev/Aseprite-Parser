@@ -61,6 +61,8 @@ class Layer:
         self.flags["is_reference_layer"] = bool((flags >> 6) & 1)
 
         if self.sprite.flags["layers_have_uuid"]:
-            self.uuid = struct.unpack("<iiii", chunk_data[chunk_size - 16 : chunk_size])[0]
+            self.uuid = struct.unpack(
+                "<iiii", chunk_data[chunk_size - 16 : chunk_size]
+            )[0]
 
         return self
