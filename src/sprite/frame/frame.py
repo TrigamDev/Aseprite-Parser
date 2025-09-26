@@ -1,9 +1,11 @@
 from io import BufferedReader
 import struct
 
+from src.sprite.cel.cel import Cel
 from src.sprite.chunk.cel_chunk import CelChunk
 from src.sprite.chunk.chunk_type import ChunkType
 from src.sprite.chunk.layer_chunk import LayerChunk
+from src.sprite.layer.layer import Layer
 
 
 class Frame:
@@ -11,7 +13,7 @@ class Frame:
         self.frame_duration: int = 0
         self.sprite = sprite
 
-    def read(self, file_reader: BufferedReader):
+    def read(self, file_reader: BufferedReader) -> None:
         frame_header = file_reader.read(16)
         # bytes_in_frame = struct.unpack( "<i", frame_header[0:4] )[ 0 ]
 
@@ -29,9 +31,9 @@ class Frame:
         for i in range(chunks_in_frame):
             self.read_chunk(file_reader)
 
-        return self
+        self.sprite.add_frame(self)
 
-    def read_chunk(self, file_reader: BufferedReader):
+    def read_chunk(self, file_reader: BufferedReader) -> None:
         chunk_size = struct.unpack("<i", file_reader.read(4))[0]
         chunk_type = ChunkType(
             struct.unpack("<i", file_reader.read(2) + b"\x00\x00")[0]
@@ -42,9 +44,9 @@ class Frame:
 
         match chunk_type:
             case ChunkType.Layer:
-                chunk = LayerChunk(self, chunk_size, chunk_data)
-                chunk.read()
+                chunk = LayerChunk(self.sprite, chunk_size, chunk_data)
+                layer: Layer | None = chunk.read()
+                self.sprite.add_layer(layer)
             case ChunkType.Cel:
-                chunk = CelChunk(self, chunk_size, chunk_data)
-                cel = chunk.read()
-                print(f"Cel: {cel}")
+                chunk = CelChunk(self.sprite, chunk_size, chunk_data)
+                cel: Cel | None = chunk.read()

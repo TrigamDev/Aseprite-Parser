@@ -1,14 +1,13 @@
 import struct
+from typing import Self
 
 from src.sprite.cel.cel_type import CelType
-from src.sprite.color.color_depth import ColorDepth
 
 
 class Cel:
-    def __init__(self, color_depth: ColorDepth):
+    def __init__(self, sprite):
+        self.sprite = sprite
         self.cel_type: CelType = CelType.Unknown
-
-        self.color_depth: ColorDepth = color_depth
         self.layer_index: int = 0
 
         self.x: int = 0
@@ -17,7 +16,7 @@ class Cel:
         self.opacity: int = 0
         self.z_index: int = 0
 
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes):
+    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         self.layer_index = struct.unpack("<i", chunk_data[0:2] + b"\x00\x00")[0]
 
         self.x = struct.unpack("<i", chunk_data[2:4] + b"\x00\x00")[0]
@@ -27,3 +26,5 @@ class Cel:
         self.z_index = struct.unpack("<i", chunk_data[9:11] + b"\x00\x00")[0]
 
         self.cel_type = CelType(struct.unpack("<i", chunk_data[7:9] + b"\x00\x00")[0])
+
+        return self

@@ -16,8 +16,8 @@ from src.sprite.sprite import ColorDepth
 
 
 class ImageCel(Cel):
-    def __init__(self, color_depth: ColorDepth):
-        super().__init__(color_depth)
+    def __init__(self, sprite):
+        super().__init__(sprite)
 
         self.width: int = 0
         self.height: int = 0
@@ -35,7 +35,7 @@ class ImageCel(Cel):
             pixels_stream = zlib.decompress(pixels_stream)
 
         pixels_list: list[IndexedPixel | GrayscalePixel | RGBAPixel] = []
-        match self.color_depth:
+        match self.sprite.color_depth:
             case ColorDepth.Indexed:
                 pixels_list = parse_indexed_pixel_stream(pixels_stream)
             case ColorDepth.Grayscale:

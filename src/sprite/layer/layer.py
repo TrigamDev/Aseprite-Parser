@@ -6,7 +6,9 @@ from src.sprite.layer.layer_type import LayerType
 
 
 class Layer:
-    def __init__(self):
+    def __init__(self, sprite):
+        self.sprite = sprite
+
         self.uuid: int | None = None
         self.layer_name: str = ""
         self.layer_type: LayerType = LayerType.Unknown
@@ -58,3 +60,5 @@ class Layer:
 
         if layers_have_uuid:
             self.uuid = struct.unpack("<i", chunk_data[chunk_size - 16 : chunk_size])[0]
+
+        return self

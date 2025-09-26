@@ -1,12 +1,11 @@
 from typing import Self
 
 from src.sprite.cel.cel import Cel
-from src.sprite.color.color_depth import ColorDepth
 
 
 class LinkedCel(Cel):
-    def __init__(self, color_depth: ColorDepth):
-        super().__init__(color_depth)
+    def __init__(self, sprite):
+        super().__init__(sprite)
 
         self.linked_frame: int = 0
 

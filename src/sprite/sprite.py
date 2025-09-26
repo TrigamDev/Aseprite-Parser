@@ -1,5 +1,6 @@
 from pathlib import Path
 import struct
+from typing import Self
 
 from src.sprite.color.color_depth import ColorDepth
 from src.sprite.frame.frame import Frame
@@ -34,7 +35,7 @@ class Sprite:
         self.grid_width: int = 0
         self.grid_height: int = 0
 
-    def read_from_path(self, path: Path):
+    def read_from_path(self, path: Path) -> Self:
         with open(path, "rb") as aseprite_file:
             try:
                 file_header = aseprite_file.read(128)
@@ -89,7 +90,16 @@ class Sprite:
                     0
                 ]
                 for frame in range(0, number_of_frames):
-                    self.frames.append(Frame(self).read(aseprite_file))
+                    Frame(self).read(aseprite_file)
+
+                print(f"Frames: {self.frames}")
+                print(f"Layers: {self.layers}")
             except Exception as exception:
                 print(exception)
         return self
+
+    def add_layer(self, layer: Layer) -> None:
+        self.layers.append(layer)
+
+    def add_frame(self, frame: Frame) -> None:
+        self.frames.append(frame)
