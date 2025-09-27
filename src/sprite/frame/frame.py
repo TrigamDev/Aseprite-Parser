@@ -11,6 +11,9 @@ from src.sprite.tag.tags_chunk import TagsChunk
 from src.util import read_bytes
 
 
+frame_header_size: int = 16
+
+
 class Frame:
     def __init__(self, sprite):
         self.sprite = sprite
@@ -23,7 +26,7 @@ class Frame:
         return f"Frame({self.frame_index}, Cels: {self.cels})"
 
     def read(self, file_reader: BufferedReader) -> None:
-        frame_header = file_reader.read(16)
+        frame_header = file_reader.read(frame_header_size)
 
         frame_duration = struct.unpack("<i", frame_header[4:6] + b"\x00\x00")[0]
         if frame_duration > 0:

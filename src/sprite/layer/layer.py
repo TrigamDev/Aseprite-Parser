@@ -4,6 +4,9 @@ from src.sprite.blend_mode import BlendMode
 from src.sprite.layer.layer_type import LayerType
 from src.util import read_string, read_bytes, has_flag
 
+layer_name_byte_start: int = 16
+uuid_byte_size: int = 16
+
 
 class Layer:
     def __init__(self, sprite):
@@ -35,7 +38,7 @@ class Layer:
         return f"Layer({self.layer_index}, {self.layer_name})"
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        self.layer_name = read_string(chunk_data, 16)
+        self.layer_name = read_string(chunk_data, layer_name_byte_start)
         self.layer_type = LayerType(read_bytes(chunk_data, 2, 2, "i"))
         self.child_level = read_bytes(chunk_data, 4, 2, "i")
 
@@ -55,6 +58,8 @@ class Layer:
         self.flags["is_reference_layer"] = has_flag(flags, 6)
 
         if self.sprite.flags["layers_have_uuid"]:
-            self.uuid = read_bytes(chunk_data, chunk_size - 16, 16, "i")
+            self.uuid = read_bytes(
+                chunk_data, chunk_size - uuid_byte_size, uuid_byte_size, "i"
+            )
 
         return self

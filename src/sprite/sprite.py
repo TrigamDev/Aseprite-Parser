@@ -9,6 +9,9 @@ from src.sprite.tag.tag import Tag
 from src.util import read_bytes, has_flag
 
 
+sprite_header_size: int = 128
+
+
 class Sprite:
     def __init__(self):
         self.file_size: int = 0
@@ -39,7 +42,7 @@ class Sprite:
 
     def read_from_path(self, path: Path) -> Self:
         with open(path, "rb") as aseprite_file:
-            file_header = aseprite_file.read(128)
+            file_header = aseprite_file.read(sprite_header_size)
 
             self.file_size = read_bytes(file_header, 0, 4, "i")
             self.width = read_bytes(file_header, 8, 2, "i")

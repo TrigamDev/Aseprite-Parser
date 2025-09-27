@@ -1,6 +1,8 @@
 import struct
 from io import BytesIO
 
+from src.util import read_bytes
+
 
 class Tile:
     def __init__(self):
@@ -33,8 +35,7 @@ def parse_tile_stream(
         elif len(tile_bytes) < bytes_per_tile:
             tile_bytes += b"\x00" * (bytes_per_tile - len(tile_bytes))
 
-        struct_format: str = f"<{'i' * int(bytes_per_tile / 4)}"
-        read_tile = struct.unpack(struct_format, tile_bytes)[0]
+        read_tile = read_bytes(tile_bytes, 0, bytes_per_tile, "i")
 
         tile: Tile = Tile()
         tile.tile_id = read_tile & tile_id_bitmask

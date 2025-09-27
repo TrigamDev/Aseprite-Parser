@@ -30,7 +30,7 @@ def read_string(byte_data: bytes, byte_start: int) -> str:
     from_byte: int = byte_start + string_header_size
     to_byte: int = from_byte + string_byte_length
 
-    string_bytes = byte_data[from_byte : to_byte]
+    string_bytes = byte_data[from_byte:to_byte]
     return string_bytes.decode("utf-8")
 
 

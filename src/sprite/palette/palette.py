@@ -1,4 +1,9 @@
-from src.util import read_bytes, read_string
+from src.util import read_bytes, read_string, string_byte_size, string_header_size
+
+palette_chunk_header_size: int = 20
+palette_entry_size: int = 6
+old_palette_chunk_header_size: int = 2
+old_palette_color_size: int = 3
 
 
 class Palette:
@@ -35,7 +40,7 @@ class Palette:
         self.resize(palette_size)
 
         num_changed_entries: int = to_index - from_index + 1
-        entry_bytes_start = 20
+        entry_bytes_start = palette_chunk_header_size
         for i in range(num_changed_entries):
             entry_flags: int = read_bytes(chunk_data, entry_bytes_start, 2, "i")
             has_name: bool = bool(entry_flags & 1)
@@ -47,11 +52,13 @@ class Palette:
 
             if has_name:
                 entry_name: str = read_string(chunk_data, entry_bytes_start + 6)
-                entry_bytes_start = (
-                    entry_bytes_start + 8 + len(entry_name.encode("utf-8"))
+                entry_bytes_start += (
+                    palette_entry_size
+                    + string_byte_size(entry_name)
+                    + string_header_size
                 )
             else:
-                entry_bytes_start = entry_bytes_start + 6
+                entry_bytes_start += palette_entry_size
 
             self.set_color(
                 from_index + i, (entry_red, entry_green, entry_blue, entry_alpha)
@@ -64,7 +71,7 @@ class Palette:
 
         num_entries_to_skip: int = 0
 
-        packet_bytes_start: int = 2
+        packet_bytes_start: int = old_palette_chunk_header_size
         for packet_num in range(number_of_packets):
             num_entries_to_skip += read_bytes(chunk_data, packet_bytes_start, 1, "i")
 
@@ -93,6 +100,6 @@ class Palette:
 
                 self.set_color(color_num, (color_red, color_green, color_blue, 255))
 
-                color_bytes_start += 3
+                color_bytes_start += old_palette_color_size
 
             packet_bytes_start = color_bytes_start

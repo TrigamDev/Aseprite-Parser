@@ -21,4 +21,6 @@ class TagsChunk(Chunk):
             tag = Tag().read_from_chunk(self.chunk_size, tag_data)
 
             self.sprite.tags.append(tag)
-            next_tag_start += tag_size + string_byte_size(tag.tag_name) + string_header_size
+            next_tag_start += (
+                tag_size + string_byte_size(tag.tag_name) + string_header_size
+            )
