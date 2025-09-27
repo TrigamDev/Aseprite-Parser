@@ -5,6 +5,7 @@ from src.sprite.color.color_depth import ColorDepth
 from src.sprite.frame.frame import Frame
 from src.sprite.layer.layer import Layer
 from src.sprite.palette.palette import Palette
+from src.sprite.tag.tag import Tag
 from src.util import read_bytes, has_flag
 
 
@@ -26,6 +27,7 @@ class Sprite:
         self.layers: list[Layer] = []
         self.frames: list[Frame] = []
         self.frame_speed: int = 0
+        self.tags: list[Tag] = []
 
         self.pixel_width: int = 0
         self.pixel_height: int = 0
@@ -77,6 +79,7 @@ class Sprite:
             print(f"Palette: {self.palette}")
             print(f"Frames: {self.frames}")
             print(f"Layers: {self.layers}")
+            print(f"Tags: {self.tags}")
         return self
 
     def add_layer(self, layer: Layer) -> None:

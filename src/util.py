@@ -21,7 +21,18 @@ def read_bytes(
     )[0]
 
 
+string_header_size: int = 2
+
+
 def read_string(byte_data: bytes, byte_start: int) -> str:
     string_byte_length = read_bytes(byte_data, byte_start, 2, "i")
-    string_bytes = byte_data[byte_start + 2 : byte_start + 2 + string_byte_length]
+
+    from_byte: int = byte_start + string_header_size
+    to_byte: int = from_byte + string_byte_length
+
+    string_bytes = byte_data[from_byte : to_byte]
     return string_bytes.decode("utf-8")
+
+
+def string_byte_size(string: str) -> int:
+    return len(string.encode("utf-8"))

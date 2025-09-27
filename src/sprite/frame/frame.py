@@ -7,6 +7,7 @@ from src.sprite.chunk.chunk_type import ChunkType
 from src.sprite.layer.layer_chunk import LayerChunk
 from src.sprite.palette.palette_chunk import PaletteChunk
 from src.sprite.layer.layer import Layer
+from src.sprite.tag.tags_chunk import TagsChunk
 from src.util import read_bytes
 
 
@@ -57,6 +58,9 @@ class Frame:
                     self.cels.append(cel)
             case ChunkType.Palette | ChunkType.OldPalette | ChunkType.EvenOlderPalette:
                 chunk = PaletteChunk(self.sprite, chunk_type, chunk_size, chunk_data)
+                chunk.read()
+            case ChunkType.Tags:
+                chunk = TagsChunk(self.sprite, chunk_size, chunk_data)
                 chunk.read()
             case ChunkType.Unknown | _:
                 print(f"Unhandled chunk: {chunk_type.name}, {chunk_size} bytes")
