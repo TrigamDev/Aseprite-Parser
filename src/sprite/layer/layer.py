@@ -1,8 +1,8 @@
-import struct
 from typing import Self
 
 from src.sprite.blend_mode import BlendMode
 from src.sprite.layer.layer_type import LayerType
+from src.util import read_string, read_bytes, has_flag
 
 
 class Layer:
@@ -35,34 +35,26 @@ class Layer:
         return f"Layer({self.layer_name}, {self.layer_index})"
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        layer_name_length = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
-        end_byte = 18 + layer_name_length
-        self.layer_name = chunk_data[18:end_byte].decode("utf-8")
-        self.layer_type = LayerType(
-            struct.unpack("<i", chunk_data[2:4] + b"\x00\x00")[0]
-        )
-        self.child_level = struct.unpack("<i", chunk_data[4:6] + b"\x00\x00")[0]
+        self.layer_name = read_string(chunk_data, 16)
+        self.layer_type = LayerType(read_bytes(chunk_data, 2, 2, "i"))
+        self.child_level = read_bytes(chunk_data, 4, 2, "i")
 
-        self.opacity = struct.unpack("<i", chunk_data[12:13] + b"\x00\x00\x00")[0]
-        self.blend_mode = BlendMode(
-            struct.unpack("<i", chunk_data[10:12] + b"\x00\x00")[0]
-        )
+        self.opacity = read_bytes(chunk_data, 12, 1, "i")
+        self.blend_mode = BlendMode(read_bytes(chunk_data, 10, 2, "i"))
 
-        self.default_width = struct.unpack("<i", chunk_data[6:8] + b"\x00\x00")[0]
-        self.default_height = struct.unpack("<i", chunk_data[8:10] + b"\x00\x00")[0]
+        self.default_width = read_bytes(chunk_data, 6, 2, "i")
+        self.default_height = read_bytes(chunk_data, 8, 2, "i")
 
-        flags = struct.unpack("<i", chunk_data[0:2] + b"\x00\x00")[0]
-        self.flags["is_visible"] = bool(flags & 1)
-        self.flags["is_editable"] = bool((flags >> 1) & 1)
-        self.flags["is_movement_locked"] = bool((flags >> 2) & 1)
-        self.flags["is_background_layer"] = bool((flags >> 3) & 1)
-        self.flags["is_prefer_linked_cells"] = bool((flags >> 4) & 1)
-        self.flags["is_layer_group_collapsed"] = bool((flags >> 5) & 1)
-        self.flags["is_reference_layer"] = bool((flags >> 6) & 1)
+        flags = read_bytes(chunk_data, 0, 2, "i")
+        self.flags["is_visible"] = has_flag(flags, 0)
+        self.flags["is_editable"] = has_flag(flags, 1)
+        self.flags["is_movement_locked"] = has_flag(flags, 2)
+        self.flags["is_background_layer"] = has_flag(flags, 3)
+        self.flags["is_prefer_linked_cells"] = has_flag(flags, 4)
+        self.flags["is_layer_group_collapsed"] = has_flag(flags, 5)
+        self.flags["is_reference_layer"] = has_flag(flags, 6)
 
         if self.sprite.flags["layers_have_uuid"]:
-            self.uuid = struct.unpack(
-                "<iiii", chunk_data[chunk_size - 16 : chunk_size]
-            )[0]
+            self.uuid = read_bytes(chunk_data, chunk_size - 16, 16, "i")
 
         return self

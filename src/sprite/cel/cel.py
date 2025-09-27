@@ -1,7 +1,7 @@
-import struct
 from typing import Self
 
 from src.sprite.cel.cel_type import CelType
+from src.util import read_bytes
 
 
 class Cel:
@@ -20,14 +20,14 @@ class Cel:
         return f"Cel({self.layer_index})"
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        self.layer_index = struct.unpack("<i", chunk_data[0:2] + b"\x00\x00")[0]
+        self.layer_index = read_bytes(chunk_data, 0, 2, "i")
 
-        self.x = struct.unpack("<i", chunk_data[2:4] + b"\x00\x00")[0]
-        self.y = struct.unpack("<i", chunk_data[4:6] + b"\x00\x00")[0]
+        self.x = read_bytes(chunk_data, 2, 2, "i")
+        self.y = read_bytes(chunk_data, 4, 2, "i")
 
-        self.opacity = struct.unpack("<i", chunk_data[6:7] + b"\x00\x00\x00")[0]
-        self.z_index = struct.unpack("<i", chunk_data[9:11] + b"\x00\x00")[0]
+        self.opacity = read_bytes(chunk_data, 6, 1, "i")
+        self.z_index = read_bytes(chunk_data, 9, 2, "i")
 
-        self.cel_type = CelType(struct.unpack("<i", chunk_data[7:9] + b"\x00\x00")[0])
+        self.cel_type = CelType(read_bytes(chunk_data, 7, 2, "i"))
 
         return self

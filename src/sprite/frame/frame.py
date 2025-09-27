@@ -2,10 +2,12 @@ from io import BufferedReader
 import struct
 
 from src.sprite.cel.cel import Cel
-from src.sprite.chunk.cel_chunk import CelChunk
+from src.sprite.cel.cel_chunk import CelChunk
 from src.sprite.chunk.chunk_type import ChunkType
-from src.sprite.chunk.layer_chunk import LayerChunk
+from src.sprite.layer.layer_chunk import LayerChunk
+from src.sprite.palette.palette_chunk import PaletteChunk
 from src.sprite.layer.layer import Layer
+from src.util import read_bytes
 
 
 class Frame:
@@ -29,7 +31,7 @@ class Frame:
             self.frame_duration = self.sprite.frame_speed
 
         chunks_in_frame = struct.unpack("<i", frame_header[12:16])[0]
-        print(f"Chunks in frame: {chunks_in_frame}")
+
         if chunks_in_frame == 0:
             chunks_in_frame = struct.unpack("<i", frame_header[6:8] + b"\x00\x00")[0]
 
@@ -39,10 +41,8 @@ class Frame:
         self.sprite.add_frame(self)
 
     def read_chunk(self, file_reader: BufferedReader) -> None:
-        chunk_size = struct.unpack("<i", file_reader.read(4))[0]
-        chunk_type = ChunkType(
-            struct.unpack("<i", file_reader.read(2) + b"\x00\x00")[0]
-        )
+        chunk_size = read_bytes(file_reader.read(4), 0, 4, "i")
+        chunk_type = ChunkType(read_bytes(file_reader.read(2), 0, 2, "i"))
         chunk_data = file_reader.read(chunk_size - 6)
 
         print(f"Chunk size: {chunk_size} bytes, Chunk type: {chunk_type.name}")
@@ -57,3 +57,6 @@ class Frame:
                 cel: Cel | None = chunk.read()
                 if cel:
                     self.cels.append(cel)
+            case ChunkType.Palette:
+                chunk = PaletteChunk(self.sprite, chunk_size, chunk_data)
+                chunk.read()

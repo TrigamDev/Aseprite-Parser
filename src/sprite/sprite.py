@@ -1,10 +1,11 @@
 from pathlib import Path
-import struct
 from typing import Self
 
 from src.sprite.color.color_depth import ColorDepth
 from src.sprite.frame.frame import Frame
 from src.sprite.layer.layer import Layer
+from src.sprite.palette.palette import Palette
+from src.util import read_bytes, has_flag
 
 
 class Sprite:
@@ -20,8 +21,7 @@ class Sprite:
         }
 
         self.color_depth: ColorDepth = ColorDepth.Unknown
-        self.transparent_palette_index: int = 0
-        self.number_of_colors: int = 0
+        self.palette: Palette = Palette()
 
         self.layers: list[Layer] = []
         self.frames: list[Frame] = []
@@ -39,47 +39,38 @@ class Sprite:
         with open(path, "rb") as aseprite_file:
             file_header = aseprite_file.read(128)
 
-            self.file_size = struct.unpack("<i", file_header[0:4])[0]
-            self.width = struct.unpack("<i", file_header[8:10] + b"\x00\x00")[0]
-            self.height = struct.unpack("<i", file_header[10:12] + b"\x00\x00")[0]
+            self.file_size = read_bytes(file_header, 0, 4, "i")
+            self.width = read_bytes(file_header, 8, 2, "i")
+            self.height = read_bytes(file_header, 10, 2, "i")
 
-            flags = struct.unpack("<i", file_header[14:18])[0]
-            self.flags["is_layer_opacity_valid"] = bool(flags & 1)
-            self.flags["is_layer_valid_for_groups"] = bool((flags >> 1) & 1)
-            self.flags["layers_have_uuid"] = bool((flags >> 2) & 1)
+            flags = read_bytes(file_header, 14, 4, "i")
+            self.flags["is_layer_opacity_valid"] = has_flag(flags, 0)
+            self.flags["is_layer_valid_for_groups"] = has_flag(flags, 1)
+            self.flags["layers_have_uuid"] = has_flag(flags, 2)
 
-            self.color_depth = ColorDepth(
-                struct.unpack("<i", file_header[12:14] + b"\x00\x00")[0]
-            )
-            self.transparent_palette_index = struct.unpack(
-                "<i", file_header[24:25] + b"\x00\x00\x00"
-            )[0]
-            self.number_of_colors = struct.unpack(
-                "<i", file_header[28:30] + b"\x00\x00"
-            )[0]
-            if self.number_of_colors == 0:
-                self.number_of_colors = 256
+            self.color_depth = ColorDepth(read_bytes(file_header, 12, 2, "i"))
+            self.palette.set_transparent_index(read_bytes(file_header, 24, 1, "i"))
+            number_of_colors = read_bytes(file_header, 28, 2, "i")
+            if number_of_colors == 0:
+                number_of_colors = 256
+            self.palette.resize(number_of_colors)
 
-            self.frame_speed = struct.unpack("<i", file_header[18:20] + b"\x00\x00")[0]
+            self.frame_speed = read_bytes(file_header, 18, 2, "i")
 
-            self.pixel_width = struct.unpack(
-                "<i", file_header[30:31] + b"\x00\x00\x00"
-            )[0]
-            self.pixel_height = struct.unpack(
-                "<i", file_header[31:32] + b"\x00\x00\x00"
-            )[0]
+            self.pixel_width = read_bytes(file_header, 30, 1, "i")
+            self.pixel_height = read_bytes(file_header, 31, 1, "i")
 
-            self.grid_x = struct.unpack("<i", file_header[32:34] + b"\x00\x00")[0]
-            self.grid_y = struct.unpack("<i", file_header[34:36] + b"\x00\x00")[0]
-            self.grid_width = struct.unpack("<i", file_header[36:38] + b"\x00\x00")[0]
-            self.grid_height = struct.unpack("<i", file_header[38:40] + b"\x00\x00")[0]
+            self.grid_x = read_bytes(file_header, 32, 2, "i")
+            self.grid_y = read_bytes(file_header, 34, 2, "i")
+            self.grid_width = read_bytes(file_header, 36, 2, "i")
+            self.grid_height = read_bytes(file_header, 38, 2, "i")
             if self.grid_width == 0:
                 self.grid_width = 16
             if self.grid_height == 0:
                 self.grid_height = 16
 
             # Frames
-            number_of_frames = struct.unpack("<i", file_header[6:8] + b"\x00\x00")[0]
+            number_of_frames = read_bytes(file_header, 6, 2, "i")
             for frame in range(0, number_of_frames):
                 Frame(self).read(aseprite_file)
 

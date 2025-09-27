@@ -1,5 +1,6 @@
-import struct
 from io import BytesIO
+
+from src.util import read_bytes
 
 
 class IndexedPixel:
@@ -19,7 +20,7 @@ def parse_indexed_pixel_stream(stream: bytes) -> list[IndexedPixel]:
         if len(read_pixel) == 0:
             break
 
-        pixel_index = struct.unpack("<i", read_pixel + b"\x00\x00\x00")[0]
+        pixel_index = read_bytes(read_pixel, 0, 1, "i")
         parsed_pixels.append(IndexedPixel(pixel_index))
 
     return parsed_pixels

@@ -1,4 +1,3 @@
-import struct
 import zlib
 from typing import Self
 
@@ -13,6 +12,7 @@ from src.sprite.color.grayscale_pixel import (
 from src.sprite.color.indexed_pixel import IndexedPixel, parse_indexed_pixel_stream
 from src.sprite.color.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
 from src.sprite.sprite import ColorDepth
+from src.util import read_bytes
 
 
 class ImageCel(Cel):
@@ -30,8 +30,8 @@ class ImageCel(Cel):
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         super().read_from_chunk(chunk_size, chunk_data)
 
-        self.width = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
-        self.height = struct.unpack("<i", chunk_data[18:20] + b"\x00\x00")[0]
+        self.width = read_bytes(chunk_data, 16, 2, "i")
+        self.height = read_bytes(chunk_data, 18, 2, "i")
 
         pixels_stream: bytes = chunk_data[20:chunk_size]
         if self.cel_type == CelType.CompressedImage:

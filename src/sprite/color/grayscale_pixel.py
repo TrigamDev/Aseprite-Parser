@@ -1,5 +1,6 @@
-import struct
 from io import BytesIO
+
+from src.util import read_bytes
 
 
 class GrayscalePixel:
@@ -20,8 +21,8 @@ def parse_grayscale_pixel_stream(stream: bytes) -> list[GrayscalePixel]:
         if len(read_pixel) == 0:
             break
 
-        pixel_value = struct.unpack("<i", read_pixel[0:1] + b"\x00\x00\x00")[0]
-        pixel_alpha = struct.unpack("<i", read_pixel[1:2] + b"\x00\x00\x00")[0]
+        pixel_value = read_bytes(read_pixel, 0, 1, "i")
+        pixel_alpha = read_bytes(read_pixel, 1, 1, "i")
         parsed_pixels.append(GrayscalePixel(pixel_value, pixel_alpha))
 
     return parsed_pixels

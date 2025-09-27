@@ -1,8 +1,6 @@
 import struct
 from io import BytesIO
 
-from src.util import has_flag
-
 
 class Tile:
     def __init__(self):
@@ -40,9 +38,9 @@ def parse_tile_stream(
 
         tile: Tile = Tile()
         tile.tile_id = read_tile & tile_id_bitmask
-        tile.is_horizontally_flipped = has_flag(read_tile, x_flip_bitmask)
-        tile.is_vertically_flipped = has_flag(read_tile, y_flip_bitmask)
-        tile.is_diagonally_flipped = has_flag(read_tile, diagonal_flip_bitmask)
+        tile.is_horizontally_flipped = bool(read_tile & x_flip_bitmask)
+        tile.is_vertically_flipped = bool(read_tile & y_flip_bitmask)
+        tile.is_diagonally_flipped = bool(read_tile & diagonal_flip_bitmask)
 
         parsed_tiles.append(tile)
 

@@ -1,4 +1,3 @@
-import struct
 import zlib
 from typing import Self
 
@@ -6,6 +5,7 @@ import numpy
 
 from src.sprite.tileset.tile import Tile, parse_tile_stream
 from src.sprite.cel.cel import Cel
+from src.util import read_bytes
 
 
 class TilesetCel(Cel):
@@ -23,14 +23,14 @@ class TilesetCel(Cel):
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         super().read_from_chunk(chunk_size, chunk_data)
 
-        self.tile_width = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
-        self.tile_height = struct.unpack("<i", chunk_data[18:20] + b"\x00\x00")[0]
+        self.tile_width = read_bytes(chunk_data, 16, 2, "i")
+        self.tile_height = read_bytes(chunk_data, 18, 2, "i")
 
-        bits_per_tile = struct.unpack("<i", chunk_data[20:22] + b"\x00\x00")[0]
-        tile_id_bitmask = struct.unpack("<i", chunk_data[22:26])[0]
-        x_flip_bitmask = struct.unpack("<i", chunk_data[26:30])[0]
-        y_flip_bitmask = struct.unpack("<i", chunk_data[30:34])[0]
-        diagonal_flip_bitmask = struct.unpack("<i", chunk_data[34:38])[0]
+        bits_per_tile = read_bytes(chunk_data, 20, 2, "i")
+        tile_id_bitmask = read_bytes(chunk_data, 22, 4, "i")
+        x_flip_bitmask = read_bytes(chunk_data, 26, 4, "i")
+        y_flip_bitmask = read_bytes(chunk_data, 30, 4, "i")
+        diagonal_flip_bitmask = read_bytes(chunk_data, 34, 4, "i")
 
         compressed_tiles_stream: bytes = chunk_data[48:chunk_size]
         tiles_stream = zlib.decompress(compressed_tiles_stream)

@@ -1,5 +1,6 @@
-import struct
 from io import BytesIO
+
+from src.util import read_bytes
 
 
 class RGBAPixel:
@@ -22,10 +23,10 @@ def parse_rgba_pixel_stream(stream: bytes) -> list[RGBAPixel]:
         if len(read_pixel) == 0:
             break
 
-        pixel_red = struct.unpack("<i", read_pixel[0:1] + b"\x00\x00\x00")[0]
-        pixel_green = struct.unpack("<i", read_pixel[1:2] + b"\x00\x00\x00")[0]
-        pixel_blue = struct.unpack("<i", read_pixel[2:3] + b"\x00\x00\x00")[0]
-        pixel_alpha = struct.unpack("<i", read_pixel[3:4] + b"\x00\x00\x00")[0]
+        pixel_red = read_bytes(read_pixel, 0, 1, "i")
+        pixel_green = read_bytes(read_pixel, 1, 1, "i")
+        pixel_blue = read_bytes(read_pixel, 2, 1, "i")
+        pixel_alpha = read_bytes(read_pixel, 3, 1, "i")
         parsed_pixels.append(RGBAPixel(pixel_red, pixel_green, pixel_blue, pixel_alpha))
 
     return parsed_pixels

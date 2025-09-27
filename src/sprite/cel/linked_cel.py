@@ -1,7 +1,7 @@
-import struct
 from typing import Self
 
 from src.sprite.cel.cel import Cel
+from src.util import read_bytes
 
 
 class LinkedCel(Cel):
@@ -16,6 +16,6 @@ class LinkedCel(Cel):
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         super().read_from_chunk(chunk_size, chunk_data)
 
-        self.linked_frame = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
+        self.linked_frame = read_bytes(chunk_data, 16, 2, "i")
 
         return self

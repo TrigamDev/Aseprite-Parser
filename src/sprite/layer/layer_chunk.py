@@ -1,9 +1,8 @@
-import struct
-
 from src.sprite.chunk.chunk import Chunk
 from src.sprite.layer.layer import Layer
 from src.sprite.layer.layer_type import LayerType
 from src.sprite.layer.tilemap_layer import TilemapLayer
+from src.util import read_bytes
 
 
 class LayerChunk(Chunk):
@@ -13,9 +12,7 @@ class LayerChunk(Chunk):
         self.tileset_index: int | None = None
 
     def read(self) -> Layer | None:
-        layer_type = LayerType(
-            struct.unpack("<i", self.chunk_data[2:4] + b"\x00\x00")[0]
-        )
+        layer_type = LayerType(read_bytes(self.chunk_data, 2, 2, "i"))
 
         match layer_type:
             case LayerType.Normal:

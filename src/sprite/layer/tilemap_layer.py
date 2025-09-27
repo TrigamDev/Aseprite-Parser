@@ -1,7 +1,7 @@
-import struct
 from typing import Self
 
 from src.sprite.layer.layer import Layer
+from src.util import read_bytes
 
 
 class TilemapLayer(Layer):
@@ -12,9 +12,9 @@ class TilemapLayer(Layer):
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         super().read_from_chunk(chunk_size, chunk_data)
 
-        layer_name_length = struct.unpack("<i", chunk_data[16:18] + b"\x00\x00")[0]
+        layer_name_length = read_bytes(chunk_data, 16, 2, "i")
         end_byte = 18 + layer_name_length
 
-        self.tileset_index = struct.unpack("<i", chunk_data[end_byte : end_byte + 4])[0]
+        self.tileset_index = read_bytes(chunk_data, end_byte, 4, "i")
 
         return self
