@@ -74,6 +74,7 @@ class Sprite:
             for frame in range(0, number_of_frames):
                 Frame(self).read(aseprite_file)
 
+            print(f"Palette: {self.palette}")
             print(f"Frames: {self.frames}")
             print(f"Layers: {self.layers}")
         return self

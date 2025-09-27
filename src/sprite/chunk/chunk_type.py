@@ -3,8 +3,8 @@ from enum import IntEnum
 
 class ChunkType(IntEnum):
     Unknown = -1
-    OldPalette1 = 0x0004
-    OldPalette2 = 0x00011
+    OldPalette = 0x0004
+    EvenOlderPalette = 0x00011
     Layer = 0x2004
     Cel = 0x2005
     CelExtra = 0x2006

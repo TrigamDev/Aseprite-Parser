@@ -45,8 +45,6 @@ class Frame:
         chunk_type = ChunkType(read_bytes(file_reader.read(2), 0, 2, "i"))
         chunk_data = file_reader.read(chunk_size - 6)
 
-        print(f"Chunk size: {chunk_size} bytes, Chunk type: {chunk_type.name}")
-
         match chunk_type:
             case ChunkType.Layer:
                 chunk = LayerChunk(self.sprite, chunk_size, chunk_data)
@@ -57,6 +55,8 @@ class Frame:
                 cel: Cel | None = chunk.read()
                 if cel:
                     self.cels.append(cel)
-            case ChunkType.Palette:
-                chunk = PaletteChunk(self.sprite, chunk_size, chunk_data)
+            case ChunkType.Palette | ChunkType.OldPalette | ChunkType.EvenOlderPalette:
+                chunk = PaletteChunk(self.sprite, chunk_type, chunk_size, chunk_data)
                 chunk.read()
+            case ChunkType.Unknown | _:
+                print(f"Unhandled chunk: {chunk_type.name}, {chunk_size} bytes")

@@ -6,6 +6,9 @@ class Palette:
         self.colors: list[tuple[int, int, int, int] | None] = []
         self.transparent_index: int = 0
 
+    def __repr__(self):
+        return f"Palette({self.colors}, {self.transparent_index})"
+
     def get_color(self, index: int):
         return self.colors[index]
 
@@ -22,15 +25,14 @@ class Palette:
         if len(self.colors) > new_length:
             del self.colors[new_length:]
         else:
-            self.colors.extend([None] * (new_length - len(self.colors) + 1))
+            self.colors.extend([None] * (new_length - len(self.colors)))
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes):
         palette_size: int = read_bytes(chunk_data, 0, 4, "i")
         from_index: int = read_bytes(chunk_data, 4, 4, "i")
         to_index: int = read_bytes(chunk_data, 8, 4, "i")
 
-        if palette_size > len(self.colors):
-            self.resize(to_index)
+        self.resize(palette_size)
 
         num_changed_entries: int = to_index - from_index + 1
         entry_bytes_start = 20
@@ -55,4 +57,32 @@ class Palette:
                 from_index + i, (entry_red, entry_green, entry_blue, entry_alpha)
             )
 
-        print(self.colors)
+    def read_from_old_chunk(self, chunk_size: int, chunk_data: bytes):
+        number_of_packets: int = read_bytes(chunk_data, 0, 2, "i")
+
+        num_entries_to_skip: int = 0
+
+        packet_bytes_start: int = 2
+        for packet_num in range(number_of_packets):
+            num_entries_to_skip += read_bytes(chunk_data, packet_bytes_start, 1, "i")
+
+            num_colors_in_packet: int = read_bytes(chunk_data, packet_bytes_start + 1, 1, "i")
+            if num_colors_in_packet == 0:
+                num_colors_in_packet = 256
+
+            self.resize(num_colors_in_packet)
+
+            color_bytes_start: int = packet_bytes_start + 2
+            for color_num in range(num_entries_to_skip, num_colors_in_packet + num_entries_to_skip):
+                color_red: int = read_bytes(chunk_data, color_bytes_start, 1, "i")
+                color_green: int = read_bytes(chunk_data, color_bytes_start + 1, 1, "i")
+                color_blue: int = read_bytes(chunk_data, color_bytes_start + 2, 1, "i")
+
+                self.set_color(color_num, (color_red, color_green, color_blue, 255))
+
+                color_bytes_start += 3
+
+            packet_bytes_start = color_bytes_start
+
+    def read_from_even_older_chunk(self, chunk_size: int, chunk_data: bytes):
+        pass

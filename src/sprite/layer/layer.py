@@ -32,7 +32,7 @@ class Layer:
         }
 
     def __repr__(self):
-        return f"Layer({self.layer_name}, {self.layer_index})"
+        return f"Layer({self.layer_index}, {self.layer_name})"
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
         self.layer_name = read_string(chunk_data, 16)
