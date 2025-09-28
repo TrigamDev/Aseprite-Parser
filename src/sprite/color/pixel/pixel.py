@@ -9,7 +9,7 @@ class Pixel(ABC):
         self.color_depth: ColorDepth = ColorDepth.Unknown
 
     def __repr__(self) -> str:
-        return f"Pixel()"
+        return "Pixel()"
 
     @abc.abstractmethod
     def to_rgba(self) -> tuple[int, int, int, int]:

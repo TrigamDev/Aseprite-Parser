@@ -5,7 +5,7 @@ from src.util import read_bytes, read_string
 
 
 class Tag:
-    def __init__(self):
+    def __init__(self) -> None:
         self.tag_name: str = ""
 
         self.from_frame: int = 0
@@ -18,10 +18,10 @@ class Tag:
 
         self.tag_color: tuple[int, int, int] = (0, 0, 0)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Tag({self.tag_name}, {self.from_frame}-{self.to_frame})"
 
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
+    def read_from_chunk(self, chunk_data: bytes) -> Self:
         self.from_frame = read_bytes(chunk_data, 0, 2, "i")
         self.to_frame = read_bytes(chunk_data, 2, 2, "i")
 

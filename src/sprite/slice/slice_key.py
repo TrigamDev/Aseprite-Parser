@@ -7,7 +7,7 @@ slice_key_pivot_size: int = 8
 
 
 class SliceKey:
-    def __init__(self):
+    def __init__(self) -> None:
         self.frame_index: int = 0
 
         self.x: int = 0
@@ -23,12 +23,11 @@ class SliceKey:
         self.pivot_x: int = 0
         self.pivot_y: int = 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"SliceKey({self.frame_index}, {self.x}x, {self.y}y, {self.width}x{self.height})"
 
     def read_from_chunk(
         self,
-        slice_key_data_size: int,
         slice_key_data: bytes,
         is_9_patch: bool,
         has_pivot: bool,

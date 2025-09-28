@@ -1,20 +1,17 @@
-import typing
 import zlib
-from typing import Self, Type
+from typing import Self
 
 import numpy
 
 from src.sprite.color.color_depth import ColorDepth
 from src.sprite.color.pixel.grayscale_pixel import (
-    GrayscalePixel,
     parse_grayscale_pixel_stream,
 )
 from src.sprite.color.pixel.indexed_pixel import (
-    IndexedPixel,
     parse_indexed_pixel_stream,
 )
 from src.sprite.color.pixel.pixel import Pixel
-from src.sprite.color.pixel.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
+from src.sprite.color.pixel.rgba_pixel import parse_rgba_pixel_stream
 from src.util import (
     has_flag,
     read_bytes,
@@ -27,7 +24,7 @@ tileset_chunk_header_size: int = 32
 
 
 class Tileset:
-    def __init__(self, sprite):
+    def __init__(self, sprite) -> None:
         self.sprite = sprite
 
         self.tileset_id: int = -1
@@ -52,10 +49,10 @@ class Tileset:
             "try_matching_tiles_with_diagonal_flip": False,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Tileset({self.tileset_id}, {self.tileset_name}, {self.width}x{self.height})"
 
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
+    def read_from_chunk(self, chunk_data: bytes) -> Self:
         self.tileset_id = read_bytes(chunk_data, 0, 4, "i")
 
         flags = read_bytes(chunk_data, 4, 4, "i")

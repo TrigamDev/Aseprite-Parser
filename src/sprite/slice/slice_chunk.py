@@ -3,11 +3,10 @@ from src.sprite.slice.slice import Slice
 
 
 class SliceChunk(chunk.Chunk):
-    def __init__(self, sprite, chunk_size: int, chunk_data: bytes):
+    def __init__(self, sprite, chunk_size: int, chunk_data: bytes) -> None:
         super().__init__(sprite, chunk_size, chunk_data)
 
-    def read(self) -> None:
-        aseprite_slice: Slice = Slice().read_from_chunk(
-            self.chunk_size, self.chunk_data
-        )
-        self.sprite.slices.append(aseprite_slice)
+    def read(self) -> Slice:
+        aseprite_slice: Slice = Slice()
+        aseprite_slice.read_from_chunk(self.chunk_data)
+        return aseprite_slice

@@ -7,32 +7,32 @@ old_palette_color_size: int = 3
 
 
 class Palette:
-    def __init__(self):
+    def __init__(self) -> None:
         self.colors: list[tuple[int, int, int, int] | None] = []
         self.transparent_index: int = 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Palette({self.colors}, {self.transparent_index})"
 
-    def get_color(self, index: int):
+    def get_color(self, index: int) -> tuple[int, int, int, int] | None:
         return self.colors[index]
 
-    def set_color(self, index: int, color):
+    def set_color(self, index: int, color) -> None:
         self.colors[index] = color
 
-    def get_transparent_index(self):
+    def get_transparent_index(self) -> int:
         return self.transparent_index
 
-    def set_transparent_index(self, index):
+    def set_transparent_index(self, index) -> None:
         self.transparent_index = index
 
-    def resize(self, new_length: int):
+    def resize(self, new_length: int) -> None:
         if len(self.colors) > new_length:
             del self.colors[new_length:]
         else:
             self.colors.extend([None] * (new_length - len(self.colors)))
 
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes):
+    def read_from_chunk(self, chunk_data: bytes) -> None:
         palette_size: int = read_bytes(chunk_data, 0, 4, "i")
         from_index: int = read_bytes(chunk_data, 4, 4, "i")
         to_index: int = read_bytes(chunk_data, 8, 4, "i")
@@ -40,8 +40,8 @@ class Palette:
         self.resize(palette_size)
 
         num_changed_entries: int = to_index - from_index + 1
-        entry_bytes_start = palette_chunk_header_size
-        for i in range(num_changed_entries):
+        entry_bytes_start: int = palette_chunk_header_size
+        for changed_entry_num in range(num_changed_entries):
             entry_flags: int = read_bytes(chunk_data, entry_bytes_start, 2, "i")
             has_name: bool = bool(entry_flags & 1)
 
@@ -61,18 +61,16 @@ class Palette:
                 entry_bytes_start += palette_entry_size
 
             self.set_color(
-                from_index + i, (entry_red, entry_green, entry_blue, entry_alpha)
+                from_index + changed_entry_num,
+                (entry_red, entry_green, entry_blue, entry_alpha),
             )
 
-    def read_from_old_chunk(
-        self, chunk_size: int, chunk_data: bytes, is_even_older_chunk: bool
-    ):
-        number_of_packets: int = read_bytes(chunk_data, 0, 2, "i")
-
+    def read_from_old_chunk(self, chunk_data: bytes, is_even_older_chunk: bool):
+        num_packets: int = read_bytes(chunk_data, 0, 2, "i")
         num_entries_to_skip: int = 0
 
         packet_bytes_start: int = old_palette_chunk_header_size
-        for packet_num in range(number_of_packets):
+        for _ in range(num_packets):
             num_entries_to_skip += read_bytes(chunk_data, packet_bytes_start, 1, "i")
 
             num_colors_in_packet: int = read_bytes(

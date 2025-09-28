@@ -17,7 +17,7 @@ slice_chunk_header_size: int = 12
 
 
 class Slice:
-    def __init__(self):
+    def __init__(self) -> None:
         self.name: str = ""
 
         self.num_slice_keys: int = 0
@@ -28,13 +28,13 @@ class Slice:
             "has_pivot_information": False,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Slice({self.name}, {self.slice_keys})"
 
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
+    def read_from_chunk(self, chunk_data: bytes) -> Self:
         self.num_slice_keys = read_bytes(chunk_data, 0, 4, "i")
 
-        flags = read_bytes(chunk_data, 4, 4, "i")
+        flags: int = read_bytes(chunk_data, 4, 4, "i")
         self.flags["is_9_patch_slice"] = has_flag(flags, 0)
         self.flags["has_pivot_information"] = has_flag(flags, 1)
 
@@ -57,8 +57,7 @@ class Slice:
                 byte_offset : byte_offset + actual_slice_key_size
             ]
 
-            slice_key = SliceKey().read_from_chunk(
-                actual_slice_key_size,
+            slice_key: SliceKey = SliceKey().read_from_chunk(
                 slice_key_data,
                 self.flags["is_9_patch_slice"],
                 self.flags["has_pivot_information"],

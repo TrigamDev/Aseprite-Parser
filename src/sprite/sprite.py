@@ -15,7 +15,7 @@ sprite_header_size: int = 128
 
 
 class Sprite:
-    def __init__(self):
+    def __init__(self) -> None:
         self.file_size: int = 0
         self.width: int = 0
         self.height: int = 0
@@ -80,7 +80,7 @@ class Sprite:
 
             # Frames
             number_of_frames = read_bytes(file_header, 6, 2, "i")
-            for frame in range(0, number_of_frames):
+            for _ in range(0, number_of_frames):
                 Frame(self).read(aseprite_file)
 
             print(f"Palette: {self.palette}")

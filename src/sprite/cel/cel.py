@@ -5,8 +5,9 @@ from src.util import read_bytes
 
 
 class Cel:
-    def __init__(self, sprite):
+    def __init__(self, sprite) -> None:
         self.sprite = sprite
+
         self.cel_type: CelType = CelType.Unknown
         self.layer_index: int = 0
 
@@ -16,7 +17,7 @@ class Cel:
         self.opacity: int = 0
         self.z_index: int = 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Cel({self.layer_index})"
 
     def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:

@@ -4,13 +4,13 @@ from src.util import read_bytes
 
 
 class Tile:
-    def __init__(self):
+    def __init__(self) -> None:
         self.tile_id: int = 0
         self.is_horizontally_flipped: bool = False
         self.is_vertically_flipped: bool = False
         self.is_diagonally_flipped: bool = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Tile({self.tile_id})"
 
 
