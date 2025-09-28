@@ -1,25 +1,43 @@
-from typing import Self
-
-from src.layer.layer import Layer, layer_name_byte_start
-from src.util import read_bytes, string_byte_size, string_header_size
+from src.layer.blend_mode import BlendMode
+from src.layer.layer import Layer
+from src.layer.layer_flags import LayerFlags
+from src.layer.layer_type import LayerType
 
 
 class TilemapLayer(Layer):
-    def __init__(self, sprite):
-        super().__init__(sprite)
-        self.tileset_index: int = 0
-
-    def __repr__(self):
-        return f"TilemapLayer({self.layer_index}, {self.layer_name})"
-
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        super().read_from_chunk(chunk_size, chunk_data)
-
-        layer_name_length = string_byte_size(self.layer_name)
-        tileset_byte_start = (
-            layer_name_byte_start + layer_name_length + string_header_size
+    def __init__(
+        self,
+        uuid: int | None,
+        name: str,
+        layer_type: LayerType,
+        index: int,
+        child_level: int,
+        # Default dimensions
+        default_width: int,
+        default_height: int,
+        # Display
+        opacity: int,
+        blend_mode: BlendMode,
+        # Tileset
+        tileset_index: int,
+        # Flags
+        flags: LayerFlags,
+    ) -> None:
+        super().__init__(
+            uuid,
+            name,
+            layer_type,
+            index,
+            child_level,
+            default_width,
+            default_height,
+            opacity,
+            blend_mode,
+            flags,
         )
 
-        self.tileset_index = read_bytes(chunk_data, tileset_byte_start, 4, "i")
+        # Tileset
+        self.tileset_index: int = tileset_index
 
-        return self
+    def __repr__(self):
+        return f"TilemapLayer({self.index}, {self.name}, {self.tileset_index})"

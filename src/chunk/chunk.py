@@ -1,14 +1,19 @@
-import abc
-from abc import ABC
 from typing import Any
 
+from src.chunk.chunk_type import ChunkType
 
-class Chunk(ABC):
-    def __init__(self, sprite, chunk_size: int, chunk_data: bytes) -> None:
-        self.sprite = sprite
-        self.chunk_size: int = chunk_size
-        self.chunk_data: bytes = chunk_data
 
-    @abc.abstractmethod
+chunk_header_format: str = (
+    "<I"  # Chunk size
+    + "H"  # Chunk type
+)
+
+
+class Chunk:
+    def __init__(self, size: int, chunk_type: ChunkType, data: bytes) -> None:
+        self.size: int = size
+        self.type: ChunkType = chunk_type
+        self.data: bytes = data
+
     def read(self) -> Any:
         pass
