@@ -27,7 +27,11 @@ class SliceKey:
         return f"SliceKey({self.frame_index}, {self.x}x, {self.y}y, {self.width}x{self.height})"
 
     def read_from_chunk(
-        self, slice_key_data_size: int, slice_key_data: bytes, is_9_patch: bool, has_pivot: bool
+        self,
+        slice_key_data_size: int,
+        slice_key_data: bytes,
+        is_9_patch: bool,
+        has_pivot: bool,
     ) -> Self:
         self.frame_index = read_bytes(slice_key_data, 0, 4, "i")
 

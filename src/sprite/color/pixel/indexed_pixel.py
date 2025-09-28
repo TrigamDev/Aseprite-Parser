@@ -1,14 +1,22 @@
 from io import BytesIO
 
+from src.sprite.color.pixel.pixel import Pixel
 from src.util import read_bytes
 
 
-class IndexedPixel:
-    def __init__(self, index: int):
+class IndexedPixel(Pixel):
+    def __init__(self, index: int) -> None:
+        super().__init__()
+
         self.index = index
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"IndexedPixel({self.index})"
+
+    # TODO: Implement logic for getting the RGBA value
+    # of an indexed pixel
+    def to_rgba(self) -> tuple[int, int, int, int]:
+        return 255, 0, 0, 255
 
 
 def parse_indexed_pixel_stream(stream: bytes) -> list[IndexedPixel]:

@@ -1,17 +1,23 @@
 from io import BytesIO
 
+from src.sprite.color.pixel.pixel import Pixel
 from src.util import read_bytes
 
 
-class RGBAPixel:
+class RGBAPixel(Pixel):
     def __init__(self, red: int, green: int, blue: int, alpha: int):
+        super().__init__()
+
         self.red = red
         self.green = green
         self.blue = blue
         self.alpha = alpha
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"RGBAPixel({self.red}, {self.green}, {self.blue}, {self.alpha})"
+
+    def to_rgba(self) -> tuple[int, int, int, int]:
+        return self.red, self.green, self.blue, self.alpha
 
 
 def parse_rgba_pixel_stream(stream: bytes) -> list[RGBAPixel]:

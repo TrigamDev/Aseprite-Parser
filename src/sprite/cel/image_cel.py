@@ -5,12 +5,16 @@ import numpy
 
 from src.sprite.cel.cel import Cel
 from src.sprite.cel.cel_type import CelType
-from src.sprite.color.grayscale_pixel import (
+from src.sprite.color.pixel.grayscale_pixel import (
     GrayscalePixel,
     parse_grayscale_pixel_stream,
 )
-from src.sprite.color.indexed_pixel import IndexedPixel, parse_indexed_pixel_stream
-from src.sprite.color.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
+from src.sprite.color.pixel.indexed_pixel import (
+    IndexedPixel,
+    parse_indexed_pixel_stream,
+)
+from src.sprite.color.pixel.pixel import Pixel
+from src.sprite.color.pixel.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
 from src.sprite.sprite import ColorDepth
 from src.util import read_bytes
 
@@ -22,7 +26,7 @@ class ImageCel(Cel):
         self.width: int = 0
         self.height: int = 0
 
-        self.pixels: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]] = []
+        self.pixels: list[list[Pixel]] = []
 
     def __repr__(self):
         return f"ImageCel({self.width}x{self.height})"
@@ -37,7 +41,7 @@ class ImageCel(Cel):
         if self.cel_type == CelType.CompressedImage:
             pixels_stream = zlib.decompress(pixels_stream)
 
-        pixels_list: list[IndexedPixel | GrayscalePixel | RGBAPixel] = []
+        pixels_list: list[Pixel] = []
         match self.sprite.color_depth:
             case ColorDepth.Indexed:
                 pixels_list = parse_indexed_pixel_stream(pixels_stream)
@@ -46,9 +50,9 @@ class ImageCel(Cel):
             case ColorDepth.RGBA:
                 pixels_list = parse_rgba_pixel_stream(pixels_stream)
 
-        pixels_array: list[list[IndexedPixel | GrayscalePixel | RGBAPixel]] = (
-            numpy.reshape(pixels_list, (self.width, self.height)).tolist()
-        )
+        pixels_array: list[list[Pixel]] = numpy.reshape(
+            pixels_list, (self.width, self.height)
+        ).tolist()
         self.pixels = pixels_array
 
         return self

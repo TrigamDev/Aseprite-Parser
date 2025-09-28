@@ -1,10 +1,35 @@
-from typing import Self
+import typing
+import zlib
+from typing import Self, Type
 
-from src.util import has_flag, read_bytes, read_string
+import numpy
+
+from src.sprite.color.color_depth import ColorDepth
+from src.sprite.color.pixel.grayscale_pixel import (
+    GrayscalePixel,
+    parse_grayscale_pixel_stream,
+)
+from src.sprite.color.pixel.indexed_pixel import (
+    IndexedPixel,
+    parse_indexed_pixel_stream,
+)
+from src.sprite.color.pixel.pixel import Pixel
+from src.sprite.color.pixel.rgba_pixel import RGBAPixel, parse_rgba_pixel_stream
+from src.util import (
+    has_flag,
+    read_bytes,
+    read_string,
+    string_byte_size,
+    string_header_size,
+)
+
+tileset_chunk_header_size: int = 32
 
 
 class Tileset:
-    def __init__(self):
+    def __init__(self, sprite):
+        self.sprite = sprite
+
         self.tileset_id: int = -1
         self.tileset_name: str = ""
 
@@ -13,6 +38,10 @@ class Tileset:
         self.height: int = 0
 
         self.base_index: int = 1
+
+        self.external_file_id: int = -1
+        self.tileset_id_in_external_file: int = -1
+        self.external_tileset_pixels: list[list[Pixel]]
 
         self.flags: dict[str, bool] = {
             "include_external_link": False,
@@ -44,5 +73,46 @@ class Tileset:
         self.base_index = read_bytes(chunk_data, 16, 2, "i")
 
         self.tileset_name = read_string(chunk_data, 32)
+
+        byte_offset: int = (
+            tileset_chunk_header_size
+            + string_byte_size(self.tileset_name)
+            + string_header_size
+        )
+
+        if self.flags["include_external_link"]:
+            self.external_file_id = read_bytes(chunk_data, byte_offset, 4, "i")
+            self.tileset_id_in_external_file = read_bytes(
+                chunk_data, byte_offset + 4, 4, "i"
+            )
+            byte_offset += 8
+
+        if self.flags["include_external_tiles"]:
+            compressed_tileset_image_length: int = read_bytes(
+                chunk_data, byte_offset, 4, "i"
+            )
+            tileset_pixel_stream: bytes = zlib.decompress(
+                chunk_data[
+                    byte_offset + 4 : byte_offset + 4 + compressed_tileset_image_length
+                ]
+            )
+
+            tileset_pixels_list: list[Pixel] = []
+            match self.sprite.color_depth:
+                case ColorDepth.Indexed:
+                    tileset_pixels_list = parse_indexed_pixel_stream(
+                        tileset_pixel_stream
+                    )
+                case ColorDepth.Grayscale:
+                    tileset_pixels_list = parse_grayscale_pixel_stream(
+                        tileset_pixel_stream
+                    )
+                case ColorDepth.RGBA:
+                    tileset_pixels_list = parse_rgba_pixel_stream(tileset_pixel_stream)
+
+            tileset_pixels_array: list[list[Pixel]] = numpy.reshape(
+                tileset_pixels_list, (self.width, self.height * self.num_tiles)
+            ).tolist()
+            self.external_tileset_pixels = tileset_pixels_array
 
         return self

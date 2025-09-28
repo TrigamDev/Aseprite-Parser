@@ -7,6 +7,6 @@ class TilesetChunk(Chunk):
         super().__init__(sprite, chunk_size, chunk_data)
 
     def read(self):
-        tileset: Tileset = Tileset()
+        tileset: Tileset = Tileset(self.sprite)
         tileset.read_from_chunk(self.chunk_size, self.chunk_data)
         self.sprite.tilesets.append(tileset)
