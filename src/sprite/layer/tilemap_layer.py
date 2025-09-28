@@ -16,7 +16,9 @@ class TilemapLayer(Layer):
         super().read_from_chunk(chunk_size, chunk_data)
 
         layer_name_length = string_byte_size(self.layer_name)
-        tileset_byte_start = layer_name_byte_start + layer_name_length + string_header_size
+        tileset_byte_start = (
+            layer_name_byte_start + layer_name_length + string_header_size
+        )
 
         self.tileset_index = read_bytes(chunk_data, tileset_byte_start, 4, "i")
 

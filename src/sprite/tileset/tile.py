@@ -1,4 +1,3 @@
-import struct
 from io import BytesIO
 
 from src.util import read_bytes

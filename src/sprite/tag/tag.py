@@ -1,7 +1,7 @@
 from typing import Self
 
 from src.sprite.tag.loop_animation_direction import LoopAnimationDirection
-from src.util import read_bytes, read_string, string_byte_size
+from src.util import read_bytes, read_string
 
 
 class Tag:
