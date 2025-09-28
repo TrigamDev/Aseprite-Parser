@@ -7,6 +7,7 @@ from src.sprite.chunk.chunk_type import ChunkType
 from src.sprite.layer.layer_chunk import LayerChunk
 from src.sprite.palette.palette_chunk import PaletteChunk
 from src.sprite.layer.layer import Layer
+from src.sprite.slice.slice_chunk import SliceChunk
 from src.sprite.tag.tags_chunk import TagsChunk
 from src.sprite.tileset.tileset_chunk import TilesetChunk
 from src.util import read_bytes
@@ -61,7 +62,9 @@ class Frame:
                 if cel:
                     self.cels.append(cel)
             case ChunkType.Palette | ChunkType.OldPalette | ChunkType.EvenOlderPalette:
-                palette_chunk = PaletteChunk(self.sprite, chunk_type, chunk_size, chunk_data)
+                palette_chunk = PaletteChunk(
+                    self.sprite, chunk_type, chunk_size, chunk_data
+                )
                 palette_chunk.read()
             case ChunkType.Tileset:
                 tileset_chunk = TilesetChunk(self.sprite, chunk_size, chunk_data)
@@ -69,7 +72,10 @@ class Frame:
             case ChunkType.Tags:
                 tags_chunk = TagsChunk(self.sprite, chunk_size, chunk_data)
                 tags_chunk.read()
+            case ChunkType.Slice:
+                slice_chunk = SliceChunk(self.sprite, chunk_size, chunk_data)
+                slice_chunk.read()
             case ChunkType.Path:
-                print(f"Path Chunk (0x2017) ignored")
+                print("Path Chunk (0x2017) ignored")
             case ChunkType.Unknown | _:
                 print(f"Unhandled chunk: {chunk_type.name}, {chunk_size} bytes")
