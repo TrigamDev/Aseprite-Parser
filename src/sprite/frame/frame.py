@@ -8,6 +8,7 @@ from src.sprite.layer.layer_chunk import LayerChunk
 from src.sprite.palette.palette_chunk import PaletteChunk
 from src.sprite.layer.layer import Layer
 from src.sprite.tag.tags_chunk import TagsChunk
+from src.sprite.tileset.tileset_chunk import TilesetChunk
 from src.util import read_bytes
 
 
@@ -51,19 +52,24 @@ class Frame:
 
         match chunk_type:
             case ChunkType.Layer:
-                chunk = LayerChunk(self.sprite, chunk_size, chunk_data)
-                layer: Layer | None = chunk.read()
+                layer_chunk = LayerChunk(self.sprite, chunk_size, chunk_data)
+                layer: Layer | None = layer_chunk.read()
                 self.sprite.add_layer(layer)
             case ChunkType.Cel:
-                chunk = CelChunk(self.sprite, chunk_size, chunk_data)
-                cel: Cel | None = chunk.read()
+                cel_chunk = CelChunk(self.sprite, chunk_size, chunk_data)
+                cel: Cel | None = cel_chunk.read()
                 if cel:
                     self.cels.append(cel)
             case ChunkType.Palette | ChunkType.OldPalette | ChunkType.EvenOlderPalette:
-                chunk = PaletteChunk(self.sprite, chunk_type, chunk_size, chunk_data)
-                chunk.read()
+                palette_chunk = PaletteChunk(self.sprite, chunk_type, chunk_size, chunk_data)
+                palette_chunk.read()
+            case ChunkType.Tileset:
+                tileset_chunk = TilesetChunk(self.sprite, chunk_size, chunk_data)
+                tileset_chunk.read()
             case ChunkType.Tags:
-                chunk = TagsChunk(self.sprite, chunk_size, chunk_data)
-                chunk.read()
+                tags_chunk = TagsChunk(self.sprite, chunk_size, chunk_data)
+                tags_chunk.read()
+            case ChunkType.Path:
+                print(f"Path Chunk (0x2017) ignored")
             case ChunkType.Unknown | _:
                 print(f"Unhandled chunk: {chunk_type.name}, {chunk_size} bytes")

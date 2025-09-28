@@ -6,8 +6,6 @@ from src.util import read_bytes, read_string
 
 class Tag:
     def __init__(self):
-        self.sprite = None
-
         self.tag_name: str = ""
 
         self.from_frame: int = 0
