@@ -1,7 +1,7 @@
 import abc
 from abc import ABC
 
-from src.sprite.color.color_depth import ColorDepth
+from src.color.color_depth import ColorDepth
 
 
 class Pixel(ABC):

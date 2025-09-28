@@ -3,15 +3,15 @@ from typing import Self
 
 import numpy
 
-from src.sprite.color.color_depth import ColorDepth
-from src.sprite.color.pixel.grayscale_pixel import (
+from src.color.color_depth import ColorDepth
+from src.color.pixel.grayscale_pixel import (
     parse_grayscale_pixel_stream,
 )
-from src.sprite.color.pixel.indexed_pixel import (
+from src.color.pixel.indexed_pixel import (
     parse_indexed_pixel_stream,
 )
-from src.sprite.color.pixel.pixel import Pixel
-from src.sprite.color.pixel.rgba_pixel import parse_rgba_pixel_stream
+from src.color.pixel.pixel import Pixel
+from src.color.pixel.rgba_pixel import parse_rgba_pixel_stream
 from src.util import (
     has_flag,
     read_bytes,

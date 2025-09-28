@@ -3,8 +3,8 @@ from typing import Self
 
 import numpy
 
-from src.sprite.tileset.tile import Tile, parse_tile_stream
-from src.sprite.cel.cel import Cel
+from src.tileset.tile import Tile, parse_tile_stream
+from src.cel.cel import Cel
 from src.util import read_bytes
 
 

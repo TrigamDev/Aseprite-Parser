@@ -1,5 +1,5 @@
-from src.sprite.chunk import chunk
-from src.sprite.slice.slice import Slice
+from src.chunk import chunk
+from src.slice.slice import Slice
 
 
 class SliceChunk(chunk.Chunk):

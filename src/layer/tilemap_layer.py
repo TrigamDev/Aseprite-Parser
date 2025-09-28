@@ -1,6 +1,6 @@
 from typing import Self
 
-from src.sprite.layer.layer import Layer, layer_name_byte_start
+from src.layer.layer import Layer, layer_name_byte_start
 from src.util import read_bytes, string_byte_size, string_header_size
 
 

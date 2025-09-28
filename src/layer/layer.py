@@ -1,7 +1,7 @@
 from typing import Self
 
-from src.sprite.blend_mode import BlendMode
-from src.sprite.layer.layer_type import LayerType
+from src.layer.blend_mode import BlendMode
+from src.layer.layer_type import LayerType
 from src.util import read_string, read_bytes, has_flag
 
 layer_name_byte_start: int = 16

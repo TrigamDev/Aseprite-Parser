@@ -1,8 +1,8 @@
-from src.sprite.cel.cel import CelType, Cel
-from src.sprite.cel.image_cel import ImageCel
-from src.sprite.cel.linked_cel import LinkedCel
-from src.sprite.cel.tileset_cel import TilesetCel
-from src.sprite.chunk.chunk import Chunk
+from src.cel.cel import CelType, Cel
+from src.cel.image_cel import ImageCel
+from src.cel.linked_cel import LinkedCel
+from src.cel.tileset_cel import TilesetCel
+from src.chunk.chunk import Chunk
 from src.util import read_bytes
 
 

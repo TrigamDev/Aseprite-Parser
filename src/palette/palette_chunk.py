@@ -1,5 +1,5 @@
-from src.sprite.chunk.chunk import Chunk
-from src.sprite.chunk.chunk_type import ChunkType
+from src.chunk.chunk import Chunk
+from src.chunk.chunk_type import ChunkType
 
 
 class PaletteChunk(Chunk):

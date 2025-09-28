@@ -1,6 +1,6 @@
 from typing import Self
 
-from src.sprite.tag.loop_animation_direction import LoopAnimationDirection
+from src.tag.loop_animation_direction import LoopAnimationDirection
 from src.util import read_bytes, read_string
 
 

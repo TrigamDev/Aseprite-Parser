@@ -1,18 +1,18 @@
 from io import BufferedReader
 import struct
 
-from src.sprite.cel.cel import Cel
-from src.sprite.cel.cel_chunk import CelChunk
-from src.sprite.chunk.chunk_type import ChunkType
-from src.sprite.layer.layer_chunk import LayerChunk
-from src.sprite.palette.palette_chunk import PaletteChunk
-from src.sprite.layer.layer import Layer
-from src.sprite.slice.slice import Slice
-from src.sprite.slice.slice_chunk import SliceChunk
-from src.sprite.tag.tag import Tag
-from src.sprite.tag.tags_chunk import TagsChunk
-from src.sprite.tileset.tileset import Tileset
-from src.sprite.tileset.tileset_chunk import TilesetChunk
+from src.cel.cel import Cel
+from src.cel.cel_chunk import CelChunk
+from src.chunk.chunk_type import ChunkType
+from src.layer.layer_chunk import LayerChunk
+from src.palette.palette_chunk import PaletteChunk
+from src.layer.layer import Layer
+from src.slice.slice import Slice
+from src.slice.slice_chunk import SliceChunk
+from src.tag.tag import Tag
+from src.tag.tags_chunk import TagsChunk
+from src.tileset.tileset import Tileset
+from src.tileset.tileset_chunk import TilesetChunk
 from src.util import read_bytes
 
 

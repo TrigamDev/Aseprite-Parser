@@ -3,16 +3,16 @@ from typing import Self
 
 import numpy
 
-from src.sprite.cel.cel import Cel
-from src.sprite.cel.cel_type import CelType
-from src.sprite.color.pixel.grayscale_pixel import (
+from src.cel.cel import Cel
+from src.cel.cel_type import CelType
+from src.color.pixel.grayscale_pixel import (
     parse_grayscale_pixel_stream,
 )
-from src.sprite.color.pixel.indexed_pixel import (
+from src.color.pixel.indexed_pixel import (
     parse_indexed_pixel_stream,
 )
-from src.sprite.color.pixel.pixel import Pixel
-from src.sprite.color.pixel.rgba_pixel import parse_rgba_pixel_stream
+from src.color.pixel.pixel import Pixel
+from src.color.pixel.rgba_pixel import parse_rgba_pixel_stream
 from src.sprite.sprite import ColorDepth
 from src.util import read_bytes
 

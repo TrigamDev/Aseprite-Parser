@@ -1,5 +1,5 @@
-from src.sprite.chunk.chunk import Chunk
-from src.sprite.tileset.tileset import Tileset
+from src.chunk.chunk import Chunk
+from src.tileset.tileset import Tileset
 
 
 class TilesetChunk(Chunk):

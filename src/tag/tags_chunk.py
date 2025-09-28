@@ -1,5 +1,5 @@
-from src.sprite.chunk.chunk import Chunk
-from src.sprite.tag.tag import Tag
+from src.chunk.chunk import Chunk
+from src.tag.tag import Tag
 from src.util import read_bytes, string_byte_size, string_header_size
 
 tag_chunk_header_size: int = 10

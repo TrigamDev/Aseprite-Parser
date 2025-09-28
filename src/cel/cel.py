@@ -1,6 +1,6 @@
 from typing import Self
 
-from src.sprite.cel.cel_type import CelType
+from src.cel.cel_type import CelType
 from src.util import read_bytes
 
 

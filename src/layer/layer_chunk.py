@@ -1,7 +1,7 @@
-from src.sprite.chunk.chunk import Chunk
-from src.sprite.layer.layer import Layer
-from src.sprite.layer.layer_type import LayerType
-from src.sprite.layer.tilemap_layer import TilemapLayer
+from src.chunk.chunk import Chunk
+from src.layer.layer import Layer
+from src.layer.layer_type import LayerType
+from src.layer.tilemap_layer import TilemapLayer
 from src.util import read_bytes
 
 

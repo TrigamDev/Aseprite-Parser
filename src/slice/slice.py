@@ -1,5 +1,5 @@
 from typing import Self
-from src.sprite.slice.slice_key import (
+from src.slice.slice_key import (
     SliceKey,
     slice_key_size,
     slice_key_9_patch_size,

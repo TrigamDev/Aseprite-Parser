@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from src.sprite.color.pixel.pixel import Pixel
+from src.color.pixel.pixel import Pixel
 from src.util import read_bytes
 
 

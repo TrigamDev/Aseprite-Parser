@@ -1,6 +1,6 @@
 from typing import Self
 
-from src.sprite.cel.cel import Cel
+from src.cel.cel import Cel
 from src.util import read_bytes
 
 
