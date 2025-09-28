@@ -81,7 +81,7 @@ class LayerReader:
                 self.chunk.data[end_byte : end_byte + layer_chunk_uuid_struct.size]
             )[0]
 
-    def to_layer(self) -> Layer | None:
+    def to_layer(self) -> Layer | TilemapLayer | None:
         match self.layer_type:
             case LayerType.Normal:
                 return Layer(

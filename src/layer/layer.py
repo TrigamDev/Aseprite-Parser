@@ -2,9 +2,6 @@ from src.layer.blend_mode import BlendMode
 from src.layer.layer_flags import LayerFlags
 from src.layer.layer_type import LayerType
 
-layer_name_byte_start: int = 16
-uuid_byte_size: int = 16
-
 
 class Layer:
     def __init__(

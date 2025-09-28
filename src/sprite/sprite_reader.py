@@ -8,6 +8,7 @@ from src.frame.frame_header import frame_bytes_struct, frame_bytes_size
 from src.frame.frame_reader import FrameReader
 from src.layer.layer import Layer
 from src.layer.layer_reader import LayerReader
+from src.layer.tilemap_layer import TilemapLayer
 from src.palette.palette import Palette
 from src.sprite.sprite import Sprite
 from src.sprite.sprite_flags import SpriteFlags
@@ -36,7 +37,7 @@ class SpriteReader:
         self.grid_height: int = 0
 
         self.palette: Palette = Palette()
-        self.layers: list[Layer] = []
+        self.layers: list[Layer | TilemapLayer] = []
         self.frames: list[Frame] = []
 
     def read(self) -> None:
@@ -118,7 +119,7 @@ class SpriteReader:
                         chunk, layer_index, layers_have_uuid
                     )
                     layer_reader.read()
-                    layer: Layer | None = layer_reader.to_layer()
+                    layer: Layer | TilemapLayer | None = layer_reader.to_layer()
                     if layer:
                         self.layers.append(layer)
 
