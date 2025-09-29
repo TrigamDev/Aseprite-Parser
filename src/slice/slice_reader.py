@@ -1,11 +1,10 @@
-from io import BytesIO
 from struct import Struct
 from src.chunk.chunk import Chunk
 from src.slice.slice import Slice
 from src.slice.slice_flags import SliceFlags
 from src.slice.slice_key import SliceKey
 from src.slice.slice_key_reader import SliceKeyReader
-from src.util import read_string, string_byte_size, string_header_size
+from src.util import read_string
 
 slice_chunk_format: str = (
     "<I"  # Number of slice keys
@@ -27,22 +26,17 @@ class SliceReader:
 
     def read(self) -> None:
         (self.num_slice_keys, flags) = slice_chunk_struct.unpack(
-            self.chunk.data[: slice_chunk_struct.size]
+            self.chunk.data.read(slice_chunk_struct.size)
         )
         self.flags |= flags
+        self.name = read_string(self.chunk.data)
 
-        self.name = read_string(self.chunk.data, slice_chunk_struct.size)
         self.read_slice_keys()
 
     def read_slice_keys(self) -> None:
-        slice_keys_start: int = (
-            slice_chunk_struct.size + string_byte_size(self.name) + string_header_size
-        )
-        slice_keys_data: BytesIO = BytesIO(self.chunk.data[slice_keys_start:])
-
         for _ in range(0, self.num_slice_keys):
             slice_key_reader: SliceKeyReader = SliceKeyReader(
-                slice_keys_data, self.flags
+                self.chunk.data, self.flags
             )
             slice_key_reader.read()
 

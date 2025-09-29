@@ -4,7 +4,7 @@ from src.chunk.chunk import Chunk
 from src.chunk.chunk_type import ChunkType
 from src.color.color_depth import ColorDepth
 from src.frame.frame import Frame
-from src.frame.frame_header import frame_bytes_struct, frame_bytes_size
+from src.frame.frame_header import frame_bytes_struct
 from src.frame.frame_reader import FrameReader
 from src.layer.layer import Layer
 from src.layer.layer_reader import LayerReader
@@ -14,14 +14,14 @@ from src.slice.slice import Slice
 from src.slice.slice_reader import SliceReader
 from src.sprite.sprite import Sprite
 from src.sprite.sprite_flags import SpriteFlags
-from src.sprite.sprite_header import sprite_header_struct, sprite_header_size
+from src.sprite.sprite_header import sprite_header_struct
 from src.tag.tag import Tag
 from src.tileset.tileset import Tileset
 
 
 class SpriteReader:
     def __init__(self, sprite_data: bytes) -> None:
-        self.sprite_data = sprite_data
+        self.sprite_data: BytesIO = BytesIO(sprite_data)
 
         self.file_size: int = 0
         self.magic_number: int = 0
@@ -52,8 +52,7 @@ class SpriteReader:
         self.read_frames()
 
     def read_header(self) -> None:
-        header_data: bytes = self.sprite_data[0:sprite_header_size]
-
+        header_data: bytes = self.sprite_data.read(sprite_header_struct.size)
         (
             self.file_size,
             self.magic_number,
@@ -96,15 +95,17 @@ class SpriteReader:
         self.flags |= flags
 
     def read_frames(self) -> None:
-        frames_data: BytesIO = BytesIO(self.sprite_data[sprite_header_size:])
         for frame_num in range(0, self.num_frames):
             # Get size of frame data
-            frame_size: int = frame_bytes_struct.unpack(
-                frames_data.read(frame_bytes_size)
+            bytes_in_frame: int = frame_bytes_struct.unpack(
+                self.sprite_data.read(frame_bytes_struct.size)
             )[0]
-            frames_data.seek(frames_data.tell() - frame_bytes_size)
+            self.sprite_data.seek(self.sprite_data.tell() - frame_bytes_struct.size)
 
-            frame_data = frames_data.read(frame_size)
+            # Get frame data
+            frame_data: BytesIO = BytesIO(self.sprite_data.read(bytes_in_frame))
+
+            # Read frame
             frame_reader: FrameReader = FrameReader(frame_data, frame_num, self.speed)
             frame_reader.read()
 

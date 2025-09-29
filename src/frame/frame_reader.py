@@ -5,14 +5,14 @@ from src.cel.cel import Cel
 from src.chunk.chunk import Chunk, chunk_header_format
 from src.chunk.chunk_type import ChunkType
 from src.frame.frame import Frame
-from src.frame.frame_header import frame_header_size, frame_header_struct
+from src.frame.frame_header import frame_header_struct
 
 
 class FrameReader:
     def __init__(
-        self, frame_data: bytes, frame_index: int, sprite_frame_duration: int
+        self, frames_data: BytesIO, frame_index: int, sprite_frame_duration: int
     ) -> None:
-        self.frame_data: bytes = frame_data
+        self.frames_data: BytesIO = frames_data
         self.frame_index: int = frame_index
         self.sprite_frame_duration: int = sprite_frame_duration
 
@@ -25,8 +25,7 @@ class FrameReader:
         self.cels: list[Cel] = []
 
     def read(self) -> None:
-        header_data: bytes = self.frame_data[:frame_header_size]
-
+        header_data: bytes = self.frames_data.read(frame_header_struct.size)
         (
             self.bytes_in_frame,
             self.magic_number,
@@ -51,7 +50,7 @@ class FrameReader:
         # Create chunks
         chunks: list[Chunk] = []
         chunks_data: BytesIO = BytesIO(
-            self.frame_data[frame_header_size : self.bytes_in_frame]
+            self.frames_data.read(self.bytes_in_frame)
         )
         chunk_header_struct: Struct = Struct(chunk_header_format)
 
@@ -63,7 +62,7 @@ class FrameReader:
             # Get chunk data
             chunk_data: bytes = chunks_data.read(chunk_size - chunk_header_struct.size)
 
-            chunk: Chunk = Chunk(chunk_size, ChunkType(chunk_type), chunk_data)
+            chunk: Chunk = Chunk(chunk_size, ChunkType(chunk_type), BytesIO(chunk_data))
             chunks.append(chunk)
 
         return chunks

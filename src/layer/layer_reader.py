@@ -5,7 +5,7 @@ from src.layer.layer import Layer
 from src.layer.layer_flags import LayerFlags
 from src.layer.layer_type import LayerType
 from src.layer.tilemap_layer import TilemapLayer
-from src.util import read_string, string_byte_size, string_header_size
+from src.util import read_string
 
 layer_chunk_format: str = (
     "<H"  # Flags
@@ -50,35 +50,28 @@ class LayerReader:
             self.default_layer_height,
             blend_mode,
             self.opacity,
-        ) = layer_chunk_struct.unpack(self.chunk.data[: layer_chunk_struct.size])
+        ) = layer_chunk_struct.unpack(self.chunk.data.read(layer_chunk_struct.size))
 
         self.flags |= flags
         self.layer_type = LayerType(layer_type)
         self.blend_mode = BlendMode(blend_mode)
 
-        self.layer_name = read_string(self.chunk.data, layer_chunk_struct.size)
-        end_byte: int = (
-            layer_chunk_struct.size
-            + string_header_size
-            + string_byte_size(self.layer_name)
-        )
+        self.layer_name = read_string(self.chunk.data)
 
         # Get tileset index, if layer is a tilemap layer
         if self.layer_type == LayerType.Tilemap:
             tilemap_layer_chunk_struct: Struct = Struct(tilemap_layer_chunk_format)
 
             self.tileset_index = tilemap_layer_chunk_struct.unpack(
-                self.chunk.data[end_byte : end_byte + tilemap_layer_chunk_struct.size]
+                self.chunk.data.read(tilemap_layer_chunk_struct.size)
             )[0]
-
-            end_byte += tilemap_layer_chunk_struct.size
 
         # Get layer UUID, if layers have UUIDs
         if self.layers_have_uuid:
             layer_chunk_uuid_struct: Struct = Struct(layer_chunk_uuid_format)
 
             self.uuid = layer_chunk_uuid_struct.unpack(
-                self.chunk.data[end_byte : end_byte + layer_chunk_uuid_struct.size]
+                self.chunk.data.read(layer_chunk_uuid_struct.size)
             )[0]
 
     def to_layer(self) -> Layer | TilemapLayer | None:

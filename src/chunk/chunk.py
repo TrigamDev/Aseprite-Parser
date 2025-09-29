@@ -1,3 +1,4 @@
+from io import BytesIO
 from typing import Any
 
 from src.chunk.chunk_type import ChunkType
@@ -10,10 +11,10 @@ chunk_header_format: str = (
 
 
 class Chunk:
-    def __init__(self, size: int, chunk_type: ChunkType, data: bytes) -> None:
+    def __init__(self, size: int, chunk_type: ChunkType, data: BytesIO) -> None:
         self.size: int = size
         self.type: ChunkType = chunk_type
-        self.data: bytes = data
+        self.data: BytesIO = data
 
     def read(self) -> Any:
         pass

@@ -23,4 +23,3 @@ sprite_header_format: str = (
     + "84x"  # For future
 )
 sprite_header_struct: Struct = Struct(sprite_header_format)
-sprite_header_size: int = sprite_header_struct.size

@@ -1,3 +1,4 @@
+from io import BytesIO
 import math
 import struct
 from typing import Any
@@ -77,30 +78,27 @@ def read_bytes(
 string_header_size: int = 2
 
 
-def read_string(byte_data: bytes, byte_start: int) -> str:
+def read_string(byte_data: BytesIO) -> str:
     """
     Reads a string from byte data.
 
-    Note: This only applies to Aseprite's string data,
-    which includes the string's length as the first two bytes.
+    Note: This only applies to Aseprite's string data (or
+    similarly formatted data), which includes the string's
+    length as the first two bytes.
 
     Args:
-        byte_data (bytes): The byte data to read from.
-        byte_start (int): The byte offset to start reading from.
+        byte_data (BytesIO): A BytesIO object containing the string data.
 
     Returns:
         str: The parsed string.
 
     Examples:
-        >>> read_string(b"\x0b\x00\x48\x65\x6c\x6c\x6f\x20\x77\x6f\x72\x6c\x64", 0)
+        >>> byte_data: BytesIO = BytesIO(b"\x0b\x00\x48\x65\x6c\x6c\x6f\x20\x77\x6f\x72\x6c\x64")
+        >>> read_string(byte_data)
         "Hello world"
     """
-    string_byte_length = read_bytes(byte_data, byte_start, 2, "i")
-
-    from_byte: int = byte_start + string_header_size
-    to_byte: int = from_byte + string_byte_length
-
-    string_bytes = byte_data[from_byte:to_byte]
+    string_byte_length = struct.unpack("<H", byte_data.read(2))[0]
+    string_bytes = byte_data.read(string_byte_length)
     return string_bytes.decode("utf-8")
 
 
