@@ -22,7 +22,8 @@ from src.tag.tags_reader import TagsReader
 from src.tag.tag import Tag
 from src.tileset.tileset import Tileset
 from src.tileset.tileset_reader import TilesetReader
-
+from src.userdata.userdata import UserData
+from src.userdata.userdata_reader import UserDataReader
 
 class SpriteReader:
     def __init__(self, sprite_data: bytes) -> None:
@@ -51,6 +52,7 @@ class SpriteReader:
         self.slices: list[Slice] = []
         self.frames: list[Frame] = []
         self.tags: list[Tag] = []
+        self.userdata: list[UserData] = []
 
     def read(self) -> None:
         self.read_header()
@@ -187,6 +189,11 @@ class SpriteReader:
                     palette_reader.read()
 
                 # User Data Chunk (0x2020)
+                case ChunkType.UserData:
+                    userdata_reader: UserDataReader = UserDataReader(chunk)
+                    userdata_reader.read()
+                    userdata: UserData = userdata_reader.to_userdata()
+                    self.userdata.append(userdata)
 
                 # Slice Chunk (0x2022)
                 case ChunkType.Slice:
