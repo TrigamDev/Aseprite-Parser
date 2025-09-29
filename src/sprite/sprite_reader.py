@@ -10,9 +10,13 @@ from src.layer.layer import Layer
 from src.layer.layer_reader import LayerReader
 from src.layer.tilemap_layer import TilemapLayer
 from src.palette.palette import Palette
+from src.slice.slice import Slice
+from src.slice.slice_reader import SliceReader
 from src.sprite.sprite import Sprite
 from src.sprite.sprite_flags import SpriteFlags
 from src.sprite.sprite_header import sprite_header_struct, sprite_header_size
+from src.tag.tag import Tag
+from src.tileset.tileset import Tileset
 
 
 class SpriteReader:
@@ -38,7 +42,10 @@ class SpriteReader:
 
         self.palette: Palette = Palette()
         self.layers: list[Layer | TilemapLayer] = []
+        self.tilesets: list[Tileset] = []
+        self.slices: list[Slice] = []
         self.frames: list[Frame] = []
+        self.tags: list[Tag] = []
 
     def read(self) -> None:
         self.read_header()
@@ -115,13 +122,26 @@ class SpriteReader:
                         self.flags & SpriteFlags.LayersHaveUUID
                     )
 
+                    # Read layer chunk
                     layer_reader: LayerReader = LayerReader(
                         chunk, layer_index, layers_have_uuid
                     )
                     layer_reader.read()
+
+                    # Get as layer
                     layer: Layer | TilemapLayer | None = layer_reader.to_layer()
                     if layer:
                         self.layers.append(layer)
+
+                # Slice Chunk (0x2022)
+                case ChunkType.Slice:
+                    # Read slice chunk
+                    slice_reader: SliceReader = SliceReader(chunk)
+                    slice_reader.read()
+
+                    # Get as slice
+                    sprite_slice: Slice = slice_reader.to_slice()
+                    self.slices.append(sprite_slice)
 
                 case _:
                     print(
@@ -142,10 +162,10 @@ class SpriteReader:
             ColorDepth(self.color_depth),
             self.palette,
             self.layers,
-            [],
-            [],
+            self.tilesets,
+            self.slices,
             self.frames,
             self.speed,
-            [],
+            self.tags,
             self.flags,
         )
