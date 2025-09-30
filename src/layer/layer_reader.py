@@ -59,7 +59,7 @@ class LayerReader:
         self.layer_name = read_string(self.chunk.data)
 
         # Get tileset index, if layer is a tilemap layer
-        if self.layer_type == LayerType.Tilemap:
+        if self.layer_type is LayerType.Tilemap:
             tilemap_layer_chunk_struct: Struct = Struct(tilemap_layer_chunk_format)
 
             self.tileset_index = tilemap_layer_chunk_struct.unpack(
