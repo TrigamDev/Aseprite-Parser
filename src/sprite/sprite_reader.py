@@ -12,6 +12,7 @@ from src.layer.layer import Layer
 from src.layer.layer_reader import LayerReader
 from src.layer.tilemap_layer import TilemapLayer
 from src.palette.palette import Palette
+from src.palette.palette_reader import PaletteReader
 from src.slice.slice import Slice
 from src.slice.slice_reader import SliceReader
 from src.sprite.sprite import Sprite
@@ -146,6 +147,29 @@ class SpriteReader:
                     cel: Cel = cel_reader.to_cel()
                     frame_reader.add_cel(cel)
 
+                # Cel Extra Chunk (0x2006)
+
+                # Color Profile Chunk (0x2007)
+
+                # External Files Chunk (0x2008)
+
+                # Mask Chunk (0x2016) DEPRECATED
+
+                # Path Chunk (0x2017)
+
+                # Tags Chunk (0x2018)
+
+                # Palette Chunk (0x2019), Old palette chunk (0x0004), Old palette chunk (0x0011)
+                case (
+                    ChunkType.Palette
+                    | ChunkType.OldPalette
+                    | ChunkType.EvenOlderPalette
+                ):
+                    palette_reader: PaletteReader = PaletteReader(chunk, self.palette)
+                    palette_reader.read()
+
+                # User Data Chunk (0x2020)
+
                 # Slice Chunk (0x2022)
                 case ChunkType.Slice:
                     # Read slice chunk
@@ -155,6 +179,8 @@ class SpriteReader:
                     # Get as slice
                     sprite_slice: Slice = slice_reader.to_slice()
                     self.slices.append(sprite_slice)
+
+                # Tileset Chunk (0x2023)
 
                 case _:
                     print(
