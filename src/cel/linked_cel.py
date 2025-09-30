@@ -1,21 +1,21 @@
-from typing import Self
-
 from src.cel.cel import Cel
-from src.util import read_bytes
+from src.cel.cel_type import CelType
 
 
 class LinkedCel(Cel):
-    def __init__(self, sprite):
-        super().__init__(sprite)
+    def __init__(
+        self,
+        cel_type: CelType,
+        layer_index: int,
+        x: int,
+        y: int,
+        opacity: int,
+        z_index: int,
+        linked_frame_index: int,
+    ):
+        super().__init__(cel_type, layer_index, x, y, opacity, z_index)
 
-        self.linked_frame: int = 0
+        self.linked_frame_index: int = linked_frame_index
 
     def __repr__(self):
-        return f"LinkedCel({self.linked_frame})"
-
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        super().read_from_chunk(chunk_size, chunk_data)
-
-        self.linked_frame = read_bytes(chunk_data, 16, 2, "i")
-
-        return self
+        return f"LinkedCel({self.linked_frame_index})"

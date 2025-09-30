@@ -1,34 +1,24 @@
-from typing import Self
-
 from src.cel.cel_type import CelType
-from src.util import read_bytes
 
 
 class Cel:
-    def __init__(self, sprite) -> None:
-        self.sprite = sprite
+    def __init__(
+        self,
+        cel_type: CelType,
+        layer_index: int,
+        x: int,
+        y: int,
+        opacity: int,
+        z_index: int,
+    ) -> None:
+        self.cel_type: CelType = cel_type
+        self.layer_index: int = layer_index
 
-        self.cel_type: CelType = CelType.Unknown
-        self.layer_index: int = 0
+        self.x: int = x
+        self.y: int = y
 
-        self.x: int = 0
-        self.y: int = 0
-
-        self.opacity: int = 0
-        self.z_index: int = 0
+        self.opacity: int = opacity
+        self.z_index: int = z_index
 
     def __repr__(self) -> str:
         return f"Cel({self.layer_index})"
-
-    def read_from_chunk(self, chunk_size: int, chunk_data: bytes) -> Self:
-        self.layer_index = read_bytes(chunk_data, 0, 2, "i")
-
-        self.x = read_bytes(chunk_data, 2, 2, "i")
-        self.y = read_bytes(chunk_data, 4, 2, "i")
-
-        self.opacity = read_bytes(chunk_data, 6, 1, "i")
-        self.z_index = read_bytes(chunk_data, 9, 2, "i")
-
-        self.cel_type = CelType(read_bytes(chunk_data, 7, 2, "i"))
-
-        return self

@@ -49,9 +49,7 @@ class FrameReader:
 
         # Create chunks
         chunks: list[Chunk] = []
-        chunks_data: BytesIO = BytesIO(
-            self.frames_data.read(self.bytes_in_frame)
-        )
+        chunks_data: BytesIO = BytesIO(self.frames_data.read(self.bytes_in_frame))
         chunk_header_struct: Struct = Struct(chunk_header_format)
 
         for _ in range(chunks_in_frame):
@@ -66,6 +64,9 @@ class FrameReader:
             chunks.append(chunk)
 
         return chunks
+
+    def add_cel(self, cel: Cel) -> None:
+        self.cels.append(cel)
 
     def to_frame(self) -> Frame:
         return Frame(self.frame_index, self.frame_duration, self.cels)

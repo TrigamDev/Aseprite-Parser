@@ -1,5 +1,7 @@
 from io import BytesIO
 
+from src.cel.cel import Cel
+from src.cel.cel_reader import CelReader
 from src.chunk.chunk import Chunk
 from src.chunk.chunk_type import ChunkType
 from src.color.color_depth import ColorDepth
@@ -133,6 +135,16 @@ class SpriteReader:
                     layer: Layer | TilemapLayer | None = layer_reader.to_layer()
                     if layer:
                         self.layers.append(layer)
+
+                # Cel Chunk (0x2005)
+                case ChunkType.Cel:
+                    # Read cel chunk
+                    cel_reader: CelReader = CelReader(chunk, self.color_depth)
+                    cel_reader.read()
+
+                    # Get as cel
+                    cel: Cel = cel_reader.to_cel()
+                    frame_reader.add_cel(cel)
 
                 # Slice Chunk (0x2022)
                 case ChunkType.Slice:
