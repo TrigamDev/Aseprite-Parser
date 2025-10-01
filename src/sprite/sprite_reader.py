@@ -21,6 +21,7 @@ from src.sprite.sprite_header import sprite_header_struct
 from src.tag.tags_reader import TagsReader
 from src.tag.tag import Tag
 from src.tileset.tileset import Tileset
+from src.tileset.tileset_reader import TilesetReader
 
 
 class SpriteReader:
@@ -189,6 +190,15 @@ class SpriteReader:
                     self.slices.append(sprite_slice)
 
                 # Tileset Chunk (0x2023)
+                case ChunkType.Tileset:
+                    tileset_reader: TilesetReader = TilesetReader(
+                        chunk, self.color_depth
+                    )
+                    tileset_reader.read()
+
+                    # Get as tileset
+                    tileset: Tileset = tileset_reader.to_tileset()
+                    self.tilesets.append(tileset)
 
                 case _:
                     print(
