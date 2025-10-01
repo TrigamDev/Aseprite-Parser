@@ -1,8 +1,3 @@
-slice_key_size: int = 20
-slice_key_9_patch_size: int = 16
-slice_key_pivot_size: int = 8
-
-
 class SliceKey:
     def __init__(
         self,

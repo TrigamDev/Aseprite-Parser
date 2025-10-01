@@ -72,6 +72,6 @@ class Sprite:
         print(f"Palette: {self.palette}")
         print(f"Frames: {self.frames}")
         print(f"Layers: {self.layers}")
-        # print(f"Tags: {self.tags}")
+        print(f"Tags: {self.tags}")
         # print(f"Tilesets: {self.tilesets}")
         print(f"Slices: {self.slices}")

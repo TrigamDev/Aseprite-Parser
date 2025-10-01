@@ -18,6 +18,7 @@ from src.slice.slice_reader import SliceReader
 from src.sprite.sprite import Sprite
 from src.sprite.sprite_flags import SpriteFlags
 from src.sprite.sprite_header import sprite_header_struct
+from src.tag.tags_reader import TagsReader
 from src.tag.tag import Tag
 from src.tileset.tileset import Tileset
 
@@ -158,6 +159,13 @@ class SpriteReader:
                 # Path Chunk (0x2017)
 
                 # Tags Chunk (0x2018)
+                case ChunkType.Tags:
+                    tags_reader: TagsReader = TagsReader(chunk)
+                    tags_reader.read()
+
+                    # Get as tags
+                    tags: list[Tag] = tags_reader.to_tags()
+                    self.tags.extend(tags)
 
                 # Palette Chunk (0x2019), Old palette chunk (0x0004), Old palette chunk (0x0011)
                 case (

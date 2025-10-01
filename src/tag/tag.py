@@ -1,40 +1,25 @@
-from typing import Self
-
 from src.tag.loop_animation_direction import LoopAnimationDirection
-from src.util import read_bytes, read_string
 
 
 class Tag:
-    def __init__(self) -> None:
-        self.tag_name: str = ""
+    def __init__(
+        self,
+        tag_name: str,
+        from_frame: int,
+        to_frame: int,
+        loop_animation_direction: LoopAnimationDirection,
+        repeat_times: int,
+        tag_color: tuple[int, int, int],
+    ) -> None:
+        self.tag_name: str = tag_name
 
-        self.from_frame: int = 0
-        self.to_frame: int = 0
+        self.from_frame: int = from_frame
+        self.to_frame: int = to_frame
 
-        self.loop_animation_direction: LoopAnimationDirection = (
-            LoopAnimationDirection.Unknown
-        )
-        self.repeat_times: int = 0
+        self.loop_animation_direction: LoopAnimationDirection = loop_animation_direction
+        self.repeat_times: int = repeat_times
 
-        self.tag_color: tuple[int, int, int] = (0, 0, 0)
+        self.tag_color: tuple[int, int, int] = tag_color
 
     def __repr__(self) -> str:
         return f"Tag({self.tag_name}, {self.from_frame}-{self.to_frame})"
-
-    def read_from_chunk(self, chunk_data: bytes) -> Self:
-        self.from_frame = read_bytes(chunk_data, 0, 2, "i")
-        self.to_frame = read_bytes(chunk_data, 2, 2, "i")
-
-        self.loop_animation_direction = LoopAnimationDirection(
-            read_bytes(chunk_data, 4, 1, "i")
-        )
-        self.repeat_times = read_bytes(chunk_data, 5, 2, "i")
-
-        tag_red = read_bytes(chunk_data, 13, 1, "i")
-        tag_green = read_bytes(chunk_data, 14, 1, "i")
-        tag_blue = read_bytes(chunk_data, 15, 1, "i")
-        self.tag_color = (tag_red, tag_green, tag_blue)
-
-        self.tag_name = read_string(chunk_data, 17)
-
-        return self
