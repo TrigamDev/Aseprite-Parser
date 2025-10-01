@@ -7,7 +7,7 @@ from src.util import read_string
 
 tags_chunk_format: str = (
     "<H"  # Number of tags
-    + "8x" # For future
+    + "8x"  # For future
 )
 tags_chunk_struct: Struct = Struct(tags_chunk_format)
 
