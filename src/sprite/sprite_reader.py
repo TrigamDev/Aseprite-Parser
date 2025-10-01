@@ -119,6 +119,13 @@ class SpriteReader:
             self.frames.append(frame_reader.to_frame())
 
     def read_chunks(self, frame_reader: FrameReader, chunks: list[Chunk]) -> None:
+        # Track previously read data
+        previous_chunk: Chunk | None = None
+        previous_cel: Cel | None = None
+        previous_tags: list[Tag] | None = None
+        previous_tileset: Tileset | None = None
+
+        # Read chunks
         for chunk in chunks:
             match chunk.type:
                 # Layer Chunk (0x2004)
@@ -148,6 +155,7 @@ class SpriteReader:
                     # Get as cel
                     cel: Cel = cel_reader.to_cel()
                     frame_reader.add_cel(cel)
+                    previous_cel = cel
 
                 # Cel Extra Chunk (0x2006)
 
@@ -167,6 +175,7 @@ class SpriteReader:
                     # Get as tags
                     tags: list[Tag] = tags_reader.to_tags()
                     self.tags.extend(tags)
+                    previous_tags = tags
 
                 # Palette Chunk (0x2019), Old palette chunk (0x0004), Old palette chunk (0x0011)
                 case (
@@ -199,11 +208,14 @@ class SpriteReader:
                     # Get as tileset
                     tileset: Tileset = tileset_reader.to_tileset()
                     self.tilesets.append(tileset)
+                    previous_tileset = tileset
 
                 case _:
                     print(
                         f"Unhandled chunk in frame: #{frame_reader.frame_index}, of type: {chunk.type.name}"
                     )
+
+            previous_chunk = chunk
 
     def to_sprite(self) -> Sprite:
         return Sprite(
