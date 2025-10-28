@@ -33,4 +33,4 @@ class SliceKey:
         self.pivot_y: int = pivot_y
 
     def __repr__(self) -> str:
-        return f"SliceKey({self.frame_index}, {self.x}x, {self.y}y, {self.width}x{self.height})"
+        return f"SliceKey({self.frame_index}, {self.x}x, {self.y}y, {self.width}x{self.height} {self.x}c_x, {self.y}c_y, {self.center_width}x{self.center_height}, {self.pivot_x}p_x, {self.pivot_y}p_y)"

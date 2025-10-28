@@ -12,14 +12,14 @@ slice_key_format: str = (
 )
 
 slice_key_nine_patch_format: str = (
-    "l"  # Center X
+    "<l"  # Center X
     + "l"  # Center Y
     + "I"  # Center width
     + "I"  # Center height
 )
 
 slice_key_pivot_format: str = (
-    "l"  # Pivot X
+    "<l"  # Pivot X
     + "l"  # Pivot Y
 )
 
