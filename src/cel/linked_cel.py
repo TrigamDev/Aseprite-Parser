@@ -1,5 +1,6 @@
 from src.cel.cel import Cel
 from src.cel.cel_type import CelType
+from src.color.color_depth import ColorDepth
 
 
 class LinkedCel(Cel):
@@ -11,9 +12,10 @@ class LinkedCel(Cel):
         y: int,
         opacity: int,
         z_index: int,
+        color_depth: ColorDepth,
         linked_frame_index: int,
     ):
-        super().__init__(cel_type, layer_index, x, y, opacity, z_index)
+        super().__init__(cel_type, layer_index, x, y, opacity, z_index, color_depth)
 
         self.linked_frame_index: int = linked_frame_index
 

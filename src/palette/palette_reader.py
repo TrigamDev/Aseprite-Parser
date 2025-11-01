@@ -41,10 +41,11 @@ old_palette_color_struct: Struct = Struct(old_palette_color_format)
 
 
 class PaletteReader:
-    def __init__(self, chunk: Chunk, palette: Palette) -> None:
+    def __init__(self, chunk: Chunk, transparent_entry_index: int) -> None:
         self.chunk: Chunk = chunk
-        self.palette: Palette = palette
-
+        self.transparent_entry_index: int = transparent_entry_index
+        self.colors: list[tuple[int, int, int, int] | None] = []
+        self.packed_array: list[int] = []
         self.new_palette_size: int = 0
         self.from_index: int = 0
         self.to_index: int = 0
@@ -64,15 +65,16 @@ class PaletteReader:
             self.from_index,
             self.to_index,
         ) = palette_chunk_struct.unpack(self.chunk.data.read(palette_chunk_struct.size))
-
-        self.palette.resize(self.new_palette_size)
+        self.colors = [None] * self.new_palette_size
 
         for entry_num in range(self.from_index, self.to_index):
             (flags, red, green, blue, alpha) = palette_chunk_entry_struct.unpack(
                 self.chunk.data.read(palette_chunk_entry_struct.size)
             )
             entry_flags: PaletteEntryFlags = PaletteEntryFlags(flags)
-            self.palette.set_color(entry_num, (red, green, blue, alpha))
+
+            self.colors[entry_num] = (red, green, blue, alpha)
+            self.packed_array.extend([red, green, blue, alpha])
 
             if entry_flags & PaletteEntryFlags.HasName:
                 read_string(self.chunk.data)
@@ -89,6 +91,8 @@ class PaletteReader:
                 self.chunk.data.read(old_palette_packet_struct.size)
             )
 
+            self.colors = [None] * num_colors
+
             num_entries_to_skip += skip_entries
 
             for color_num in range(num_entries_to_skip, num_colors):
@@ -103,4 +107,12 @@ class PaletteReader:
                     green = (green << 2) | (green >> 4)
                     blue = (blue << 2) | (blue >> 4)
 
-                self.palette.set_color(color_num, (red, green, blue))
+                self.colors[color_num] = (red, green, blue, 255)
+                self.packed_array.extend([red, green, blue, 255])
+
+    def to_palette(self) -> Palette:
+        return Palette(
+            self.colors,
+            self.transparent_entry_index,
+            self.packed_array
+        )

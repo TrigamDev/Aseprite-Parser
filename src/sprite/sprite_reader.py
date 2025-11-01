@@ -46,7 +46,7 @@ class SpriteReader:
         self.grid_width: int = 0
         self.grid_height: int = 0
 
-        self.palette: Palette = Palette()
+        self.palette: Palette
         self.layers: list[Layer | TilemapLayer] = []
         self.tilesets: list[Tileset] = []
         self.slices: list[Slice] = []
@@ -95,8 +95,6 @@ class SpriteReader:
 
         # Colors
         self.color_depth = ColorDepth(color_depth)
-        self.palette.resize(self.num_colors)
-        self.palette.set_transparent_entry_index(self.transparent_palette_entry_index)
 
         # Flags
         self.flags |= flags
@@ -185,8 +183,9 @@ class SpriteReader:
                     | ChunkType.OldPalette
                     | ChunkType.EvenOlderPalette
                 ):
-                    palette_reader: PaletteReader = PaletteReader(chunk, self.palette)
+                    palette_reader: PaletteReader = PaletteReader(chunk, self.transparent_palette_entry_index)
                     palette_reader.read()
+                    self.palette = palette_reader.to_palette()
 
                 # User Data Chunk (0x2020)
                 case ChunkType.UserData:

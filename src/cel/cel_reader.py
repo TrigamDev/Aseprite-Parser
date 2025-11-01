@@ -67,6 +67,7 @@ class CelReader:
         self.width: int = 0
         self.height: int = 0
         self.pixels: list[list[Pixel]] = []
+        self.pixeldata: bytes
 
         # Linked cel
         self.linked_frame_index: int = 0
@@ -101,22 +102,21 @@ class CelReader:
         )
 
         # Get stream of pixels, uncompress if needed
-        pixels_stream: bytes
         if self.cel_type is CelType.CompressedImage:
             compressed_pixel_stream = self.chunk.data.read()
-            pixels_stream = zlib.decompress(compressed_pixel_stream)
+            self.pixeldata = zlib.decompress(compressed_pixel_stream)
         else:
-            pixels_stream = self.chunk.data.read()
+            self.pixeldata = self.chunk.data.read()
 
         # Parse pixels stream into 1D list
         pixels_list: Sequence[Pixel] = []
         match self.color_depth:
             case ColorDepth.Indexed:
-                pixels_list = parse_indexed_pixel_stream(pixels_stream)
+                pixels_list = parse_indexed_pixel_stream(self.pixeldata)
             case ColorDepth.Grayscale:
-                pixels_list = parse_grayscale_pixel_stream(pixels_stream)
+                pixels_list = parse_grayscale_pixel_stream(self.pixeldata)
             case ColorDepth.RGBA:
-                pixels_list = parse_rgba_pixel_stream(pixels_stream)
+                pixels_list = parse_rgba_pixel_stream(self.pixeldata)
 
         # Reshape 1D list to 2D list
         pixels_array: list[list[Pixel]] = (
@@ -177,7 +177,9 @@ class CelReader:
                     self.height,
                     self.opacity,
                     self.z_index,
+                    self.color_depth,
                     self.pixels,
+                    self.pixeldata,
                 )
 
             # Linked cel
@@ -189,6 +191,7 @@ class CelReader:
                     self.y,
                     self.opacity,
                     self.z_index,
+                    self.color_depth,
                     self.linked_frame_index,
                 )
 
@@ -203,6 +206,7 @@ class CelReader:
                     self.tile_height,
                     self.opacity,
                     self.z_index,
+                    self.color_depth,
                     self.tiles,
                 )
 
@@ -215,4 +219,5 @@ class CelReader:
                     self.y,
                     self.opacity,
                     self.z_index,
+                    self.color_depth,
                 )

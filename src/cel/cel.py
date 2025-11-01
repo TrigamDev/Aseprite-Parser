@@ -1,4 +1,5 @@
 from src.cel.cel_type import CelType
+from src.color.color_depth import ColorDepth
 
 
 class Cel:
@@ -10,6 +11,7 @@ class Cel:
         y: int,
         opacity: int,
         z_index: int,
+        color_depth: ColorDepth
     ) -> None:
         self.cel_type: CelType = cel_type
         self.layer_index: int = layer_index
@@ -19,6 +21,7 @@ class Cel:
 
         self.opacity: int = opacity
         self.z_index: int = z_index
+        self.color_depth: ColorDepth = color_depth
 
     def __repr__(self) -> str:
         return f"Cel({self.layer_index})"
