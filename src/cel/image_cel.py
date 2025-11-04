@@ -16,7 +16,7 @@ class ImageCel(Cel):
         z_index: int,
         color_depth: ColorDepth,
         pixels: list[list[Pixel]],
-        pixeldata: bytes
+        pixel_data: bytes
     ):
         super().__init__(cel_type, layer_index, x, y, opacity, z_index, color_depth)
 
@@ -24,7 +24,7 @@ class ImageCel(Cel):
         self.width: int = width
         self.height: int = height
         self.pixels: list[list[Pixel]] = pixels
-        self.pixeldata = pixeldata
+        self.pixel_data = pixel_data
 
     def __repr__(self):
         return f"ImageCel({self.width}x{self.height})"

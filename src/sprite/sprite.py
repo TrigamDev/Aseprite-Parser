@@ -1,7 +1,11 @@
+from src.cel.image_cel import ImageCel
+from src.cel.linked_cel import LinkedCel
+from src.cel.tilemap_cel import TilemapCel
 from src.color.color_depth import ColorDepth
 from src.cel.cel_type import CelType
 from src.frame.frame import Frame
 from src.layer.layer import Layer
+from src.layer.tilemap_layer import TilemapLayer
 from src.palette.palette import Palette
 from src.slice.slice import Slice
 from src.sprite.sprite_flags import SpriteFlags
@@ -72,66 +76,92 @@ class Sprite:
         self.flags: SpriteFlags = flags
 
     class Target:
-        def __init__(self, image: Image, pos: tuple[int, int]):
-            self.image: Image = image
+        def __init__(self, image: Image.Image, pos: tuple[int, int]):
+            self.image: Image.Image = image
             self.pos: tuple[int, int] = pos
 
-    def render(self) -> list[Image]:
-        frames: dict[int, dict[int, self.Target]] = {}
+    def render(self) -> list[Image.Image]:
+        frames: dict[int, dict[int, Sprite.Target]] = {}
         for frame in self.frames:
-            targets: dict[int, self.Target] = {}
+
+            targets: dict[int, Sprite.Target] = {}
+
             for cel in frame.cels:
                 match cel.cel_type:
+
+                    # Image cels
                     case CelType.RawImageData | CelType.CompressedImage:
+                        assert isinstance(cel, ImageCel)
                         match cel.color_depth:
                             case ColorDepth.Indexed:
-                                img = Image.frombytes("P", (cel.width, cel.height), cel.pixeldata)
-                                arr = self.palette.packed_array
+                                img: Image.Image = Image.frombytes("P", (cel.width, cel.height), cel.pixel_data)
+
+                                image_data = self.palette.packed_array
                                 if len(self.palette.packed_array) > 256*4:
-                                    arr = arr[:256*4]
+                                    image_data = image_data[:256*4]
+
                                 if not self.layers[cel.layer_index].flags & LayerFlags.Background:
                                     for i in range(4):
-                                        arr[i] = 0
-                                img.putpalette(data=arr, rawmode="RGBA")
+                                        image_data[i] = 0
+
+                                img.putpalette(data=image_data, rawmode="RGBA")
+
                                 if cel.opacity < 256:
                                     img.putalpha(cel.opacity)
+
                                 targets[cel.layer_index] = self.Target(img, (cel.x, cel.y))
 
                             case ColorDepth.Grayscale:
                                 pass
 
                             case ColorDepth.RGBA:
-                                img = Image.frombytes("RGBA", (cel.width, cel.height), cel.pixeldata)
+                                img = Image.frombytes("RGBA", (cel.width, cel.height), cel.pixel_data)
+
                                 if cel.opacity < 256:
                                     img.putalpha(cel.opacity)
+
                                 targets[cel.layer_index] = self.Target(img, (cel.x, cel.y))
 
+                    # Tilemap cels
                     case CelType.CompressedTilemap:
-                        img: Image = Image.new("RGBA", (self.width, self.height), (0, 0, 0, 0))
+                        assert isinstance(cel, TilemapCel)
+                        image: Image.Image = Image.new("RGBA", (self.width, self.height), (0, 0, 0, 0))
+
                         layer = self.layers[cel.layer_index]
                         if layer.layer_type & LayerType.Tilemap:
+                            assert isinstance(layer, TilemapLayer)
+
                             tileset: Tileset = self.tilesets[layer.tileset_index]
-                            tiles: list[Image] = tileset.render()
+                            tiles: list[Image.Image] = tileset.render()
+
                             for y, row in enumerate(cel.tiles_array):
                                 for x, tile in enumerate(row):
                                     pos = (y*tileset.tile_height, x*tileset.tile_width)
-                                    img.alpha_composite(tiles[tile.tile_id], dest=pos)
-                        targets[cel.layer_index] = self.Target(img, (0, 0))
+                                    image.alpha_composite(tiles[tile.tile_id], dest=pos)
 
+                        targets[cel.layer_index] = self.Target(image, (0, 0))
+
+                    # Linked cels
                     case CelType.LinkedCel:
-                        # triangulate cel based on frame and layer
-                        linked_target: self.Target = frames[cel.linked_frame_index][cel.layer_index]
+                        assert isinstance(cel, LinkedCel)
+
+                        # Triangulate cel based on frame and layer
+                        linked_target: Sprite.Target = frames[cel.linked_frame_index][cel.layer_index]
                         targets[cel.layer_index] = self.Target(linked_target.image, (cel.x, cel.y))
 
             frames[frame.frame_index] = targets
-        # compose frames
-        frame_imgs: list[Image] = []
+
+        # Compose frames
+        rendered_frames: list[Image.Image] = []
         for i in range(len(frames)):
-            frame_img: Image = Image.new("RGBA", (self.width, self.height), (0, 0, 0, 0))
+            rendered_frame: Image.Image = Image.new("RGBA", (self.width, self.height), (0, 0, 0, 0))
+
             for target in frames[i].values():
-                frame_img.paste(target.image, box=target.pos)
-            frame_imgs.append(frame_img)
-        return frame_imgs
+                rendered_frame.paste(target.image, box=target.pos)
+
+            rendered_frames.append(rendered_frame)
+
+        return rendered_frames
 
     def print(self) -> None:
         print(f"Palette: {self.palette}")

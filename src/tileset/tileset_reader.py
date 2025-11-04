@@ -54,7 +54,7 @@ class TilesetReader:
 
         # External tileset
         self.external_tileset_pixels: list[list[Pixel]] = []
-        self.pixeldata: bytes
+        self.pixel_data: bytes
 
     def read(self) -> None:
         (
@@ -82,7 +82,7 @@ class TilesetReader:
                 self.chunk.data.read(external_tileset_struct.size)
             )[0]
 
-            self.pixeldata: bytes = zlib.decompress(
+            self.pixel_data: bytes = zlib.decompress(
                 self.chunk.data.read(compressed_tileset_image_size)
             )
 
@@ -90,11 +90,11 @@ class TilesetReader:
             pixels_list: Sequence[Pixel] = []
             match self.color_depth:
                 case ColorDepth.Indexed:
-                    pixels_list = parse_indexed_pixel_stream(self.pixeldata)
+                    pixels_list = parse_indexed_pixel_stream(self.pixel_data)
                 case ColorDepth.Grayscale:
-                    pixels_list = parse_grayscale_pixel_stream(self.pixeldata)
+                    pixels_list = parse_grayscale_pixel_stream(self.pixel_data)
                 case ColorDepth.RGBA:
-                    pixels_list = parse_rgba_pixel_stream(self.pixeldata)
+                    pixels_list = parse_rgba_pixel_stream(self.pixel_data)
 
             # Reshape 1D list to 2D list
             pixels_array: list[list[Pixel]] = (
@@ -116,5 +116,5 @@ class TilesetReader:
             self.external_file_id,
             self.external_tileset_id,
             self.external_tileset_pixels,
-            self.pixeldata
+            self.pixel_data
         )

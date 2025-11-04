@@ -19,7 +19,7 @@ class Tileset:
         external_file_id: int,
         tileset_id_in_external_file: int,
         external_tileset_pixels: list[list[Pixel]],
-        pixeldata: bytes,
+        pixel_data: bytes,
     ) -> None:
         self.tileset_id: int = tileset_id
         self.num_tiles: int = num_tiles
@@ -36,16 +36,17 @@ class Tileset:
         self.external_file_id: int = external_file_id
         self.tileset_id_in_external_file: int = tileset_id_in_external_file
         self.external_tileset_pixels: list[list[Pixel]] = external_tileset_pixels
-        self.pixeldata: bytes = pixeldata
+        self.pixel_data: bytes = pixel_data
 
     def __repr__(self) -> str:
         return f"Tileset({self.tileset_id}, {self.tileset_name})"
 
-    def render(self) -> list[Image]:
-        tiles: list[Image] = []
-        bytes_per_tile = self.tile_width*self.tile_height*4
+    def render(self) -> list[Image.Image]:
+        tiles: list[Image.Image] = []
+        bytes_per_tile = self.tile_width * self.tile_height * 4
+
         for i in range(self.num_tiles):
-            pixel_slice: bytes = self.pixeldata[bytes_per_tile*(i):bytes_per_tile*(i+1)]
+            pixel_slice: bytes = self.pixel_data[bytes_per_tile * i:bytes_per_tile * ( i + 1 )]
             # TODO: determine mode
             tiles.append(Image.frombytes("RGBA", (self.tile_width, self.tile_height), pixel_slice))
         return tiles
