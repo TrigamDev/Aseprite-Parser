@@ -1,6 +1,8 @@
+from PIL import Image
 from src.cel.cel import Cel
 from src.cel.cel_type import CelType
 from src.color.color_depth import ColorDepth
+from src.frame.frame import Frame
 
 
 class LinkedCel(Cel):
@@ -21,3 +23,6 @@ class LinkedCel(Cel):
 
     def __repr__(self):
         return f"LinkedCel({self.linked_frame_index})"
+
+    def render(self, frame: Frame) -> Image.Image:
+        raise NotImplementedError()

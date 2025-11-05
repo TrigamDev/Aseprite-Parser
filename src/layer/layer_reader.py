@@ -5,7 +5,7 @@ from src.layer.layer import Layer
 from src.layer.layer_flags import LayerFlags
 from src.layer.layer_type import LayerType
 from src.layer.tilemap_layer import TilemapLayer
-from src.util import read_string
+from src.utils.bytes import read_string
 
 layer_chunk_format: str = (
     "<H"  # Flags

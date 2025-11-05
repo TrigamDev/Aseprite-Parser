@@ -4,7 +4,7 @@ from src.slice.slice import Slice
 from src.slice.slice_flags import SliceFlags
 from src.slice.slice_key import SliceKey
 from src.slice.slice_key_reader import SliceKeyReader
-from src.util import read_string
+from src.utils.bytes import read_string
 
 slice_chunk_format: str = (
     "<I"  # Number of slice keys

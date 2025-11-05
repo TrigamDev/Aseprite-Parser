@@ -67,7 +67,7 @@ class CelReader:
         self.width: int = 0
         self.height: int = 0
         self.pixels: list[list[Pixel]] = []
-        self.pixel_data: bytes
+        self.pixel_data: bytes = bytes()
 
         # Linked cel
         self.linked_frame_index: int = 0

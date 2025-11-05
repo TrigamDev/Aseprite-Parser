@@ -1,5 +1,11 @@
+from typing import TYPE_CHECKING
+from PIL import Image
 from src.cel.cel_type import CelType
 from src.color.color_depth import ColorDepth
+
+
+if TYPE_CHECKING:
+    from src.frame.frame import Frame
 
 
 class Cel:
@@ -11,7 +17,7 @@ class Cel:
         y: int,
         opacity: int,
         z_index: int,
-        color_depth: ColorDepth
+        color_depth: ColorDepth,
     ) -> None:
         self.cel_type: CelType = cel_type
         self.layer_index: int = layer_index
@@ -25,3 +31,6 @@ class Cel:
 
     def __repr__(self) -> str:
         return f"Cel({self.layer_index})"
+
+    def render(self, frame: "Frame") -> Image.Image:
+        raise NotImplementedError()

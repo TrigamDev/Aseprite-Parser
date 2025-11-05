@@ -46,7 +46,13 @@ class Tileset:
         bytes_per_tile = self.tile_width * self.tile_height * 4
 
         for i in range(self.num_tiles):
-            pixel_slice: bytes = self.pixel_data[bytes_per_tile * i:bytes_per_tile * ( i + 1 )]
+            pixel_slice: bytes = self.pixel_data[
+                bytes_per_tile * i : bytes_per_tile * (i + 1)
+            ]
             # TODO: determine mode
-            tiles.append(Image.frombytes("RGBA", (self.tile_width, self.tile_height), pixel_slice))
+            tiles.append(
+                Image.frombytes(
+                    "RGBA", (self.tile_width, self.tile_height), pixel_slice
+                )
+            )
         return tiles

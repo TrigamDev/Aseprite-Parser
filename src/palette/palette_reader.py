@@ -4,7 +4,7 @@ from src.chunk.chunk import Chunk
 from src.chunk.chunk_type import ChunkType
 from src.palette.palette import Palette
 from src.palette.palette_entry_flags import PaletteEntryFlags
-from src.util import read_string
+from src.utils.bytes import read_string
 
 palette_chunk_format: str = (
     "<I"  # New palette size
@@ -111,8 +111,4 @@ class PaletteReader:
                 self.packed_array.extend([red, green, blue, 255])
 
     def to_palette(self) -> Palette:
-        return Palette(
-            self.colors,
-            self.transparent_entry_index,
-            self.packed_array
-        )
+        return Palette(self.colors, self.transparent_entry_index, self.packed_array)

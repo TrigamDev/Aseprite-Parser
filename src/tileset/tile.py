@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from src.util import read_bytes
+from src.utils.bytes import read_bytes
 
 
 class Tile:

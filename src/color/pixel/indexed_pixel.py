@@ -1,7 +1,7 @@
 from io import BytesIO
 
 from src.color.pixel.pixel import Pixel
-from src.util import read_bytes
+from src.utils.bytes import read_bytes
 
 
 class IndexedPixel(Pixel):

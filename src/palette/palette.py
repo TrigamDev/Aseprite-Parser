@@ -3,7 +3,7 @@ class Palette:
         self,
         colors: list[tuple[int, int, int, int] | None],
         transparent_entry_index: int,
-        packed_array: list[int]
+        packed_array: list[int],
     ) -> None:
         self.colors: list[tuple[int, int, int, int] | None] = colors
         self.transparent_entry_index: int = transparent_entry_index

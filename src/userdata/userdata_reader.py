@@ -1,5 +1,4 @@
-
-from src.util import read_string
+from src.utils.bytes import read_string
 import struct
 
 from src.chunk.chunk import Chunk
@@ -10,39 +9,42 @@ from typing import Any
 from enum import IntFlag
 
 color_format: str = (
-    "<B"     # r
-    + "B"   # g
-    + "B"   # b
-    + "B"   # a
+    "<B"  # r
+    + "B"  # g
+    + "B"  # b
+    + "B"  # a
 )
 color_struct: Struct = Struct(color_format)
 
+
 class UserDataPropertyType(IntEnum):
     Unknown = 0x0000
-    Bool = 0x0001           # 1 byte
-    Int8 = 0x0002           # 1 byte
-    Uint8 = 0x0003          # 1 byte
-    Int16 = 0x0004          # 2 bytes
-    Uint16 = 0x0005         # 2 bytes
-    Int32 = 0x0006          # 4 bytes
-    Uint32 = 0x0007         # 4 bytes
-    Int64 = 0x0008          # 8 bytes
-    Uint64 = 0x0009         # 8 bytes
-    Fixed = 0x000A          # 4 bytes
-    Float = 0x000B          # 4 bytes
-    Double = 0x000C         # 8 bytes
-    String = 0x000D         # n bytes
-    Point = 0x000E          # 16 bytes
-    Size = 0x000F           # 16 bytes
-    Rect = 0x0010           # 32 bytes
-    Vector = 0x0011         # n bytes
-    NestedMap = 0x0012      # n bytes
-    Uuid = 0x0013           # 16 bytes
+    Bool = 0x0001  # 1 byte
+    Int8 = 0x0002  # 1 byte
+    Uint8 = 0x0003  # 1 byte
+    Int16 = 0x0004  # 2 bytes
+    Uint16 = 0x0005  # 2 bytes
+    Int32 = 0x0006  # 4 bytes
+    Uint32 = 0x0007  # 4 bytes
+    Int64 = 0x0008  # 8 bytes
+    Uint64 = 0x0009  # 8 bytes
+    Fixed = 0x000A  # 4 bytes
+    Float = 0x000B  # 4 bytes
+    Double = 0x000C  # 8 bytes
+    String = 0x000D  # n bytes
+    Point = 0x000E  # 16 bytes
+    Size = 0x000F  # 16 bytes
+    Rect = 0x0010  # 32 bytes
+    Vector = 0x0011  # n bytes
+    NestedMap = 0x0012  # n bytes
+    Uuid = 0x0013  # 16 bytes
+
 
 class UserDataFlags(IntFlag):
     HasText = 1
     HasColor = 2
     HasPropertyMap = 4
+
 
 class UserDataReader:
     def __init__(self, chunk: Chunk):
@@ -100,12 +102,16 @@ class UserDataReader:
                 return {"x": x, "y": y, "w": w, "h": h}
             case UserDataPropertyType.Vector:
                 n_elems = struct.unpack("<I", self.chunk.data.read(4))[0]
-                vec_type = UserDataPropertyType(struct.unpack("<H", self.chunk.data.read(2))[0])
+                vec_type = UserDataPropertyType(
+                    struct.unpack("<H", self.chunk.data.read(2))[0]
+                )
                 values = []
                 # each value has a different type
                 if vec_type == UserDataPropertyType.Unknown:
                     for _ in range(n_elems):
-                        current_type = UserDataPropertyType(struct.unpack("<H", self.chunk.data.read(2))[0])
+                        current_type = UserDataPropertyType(
+                            struct.unpack("<H", self.chunk.data.read(2))[0]
+                        )
                         values.append(self._read_property_value(current_type))
                 # all values are the same type
                 else:
@@ -154,9 +160,4 @@ class UserDataReader:
                 self.property_maps.append(map)
 
     def to_userdata(self) -> UserData:
-        return UserData(
-            self.string,
-            self.color,
-            self.property_maps
-        )
-
+        return UserData(self.string, self.color, self.property_maps)

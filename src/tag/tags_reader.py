@@ -3,7 +3,7 @@ from struct import Struct
 from src.chunk.chunk import Chunk
 from src.tag.loop_animation_direction import LoopAnimationDirection
 from src.tag.tag import Tag
-from src.util import read_string
+from src.utils.bytes import read_string
 
 tags_chunk_format: str = (
     "<H"  # Number of tags

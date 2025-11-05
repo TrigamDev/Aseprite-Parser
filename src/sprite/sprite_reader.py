@@ -25,6 +25,7 @@ from src.tileset.tileset_reader import TilesetReader
 from src.userdata.userdata import UserData
 from src.userdata.userdata_reader import UserDataReader
 
+
 class SpriteReader:
     def __init__(self, sprite_data: bytes) -> None:
         self.sprite_data: BytesIO = BytesIO(sprite_data)
@@ -183,7 +184,9 @@ class SpriteReader:
                     | ChunkType.OldPalette
                     | ChunkType.EvenOlderPalette
                 ):
-                    palette_reader: PaletteReader = PaletteReader(chunk, self.transparent_palette_entry_index)
+                    palette_reader: PaletteReader = PaletteReader(
+                        chunk, self.transparent_palette_entry_index
+                    )
                     palette_reader.read()
                     self.palette = palette_reader.to_palette()
 

@@ -12,7 +12,7 @@ from src.color.pixel.pixel import Pixel
 from src.color.pixel.rgba_pixel import parse_rgba_pixel_stream
 from src.tileset.tileset import Tileset
 from src.tileset.tileset_flags import TilesetFlags
-from src.util import read_string
+from src.utils.bytes import read_string
 
 tileset_chunk_format: str = (
     "<I"  # Tileset ID
@@ -116,5 +116,5 @@ class TilesetReader:
             self.external_file_id,
             self.external_tileset_id,
             self.external_tileset_pixels,
-            self.pixel_data
+            self.pixel_data,
         )
